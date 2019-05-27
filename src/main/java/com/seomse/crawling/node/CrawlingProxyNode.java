@@ -1,16 +1,3 @@
-/** 
- * <pre>
- *  파 일 명 : CrawlingProxyNode.java
- *  설    명 : 크롤링 프록시 동작 ApiRequest 활용
- *             하나의 노드당 여러개의 연결통로  ApiRequest(ProxyNodeRequest) 를관리 
- *  작 성 자 : macle
- *  작 성 일 : 2018.04 ~ 2018.05
- *  버    전 : 1.0
- *  수정이력 :
- *  기타사항 :
- * </pre>
- * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
- */
 
 
 package com.seomse.crawling.node;
@@ -25,7 +12,19 @@ import org.slf4j.LoggerFactory;
 import com.seomse.api.ApiRequest;
 import com.seomse.commons.utils.ExceptionUtil;
 import com.seomse.crawling.exception.NodeEndException;
-
+/**
+ * <pre>
+ *  파 일 명 : CrawlingProxyNode.java
+ *  설    명 : 크롤링 프록시 동작 ApiRequest 활용
+ *             하나의 노드당 여러개의 연결통로  ApiRequest(ProxyNodeRequest) 를관리
+ *  작 성 자 : macle
+ *  작 성 일 : 2018.04 ~ 2018.05
+ *  버    전 : 1.0
+ *  수정이력 :
+ *  기타사항 :
+ * </pre>
+ * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
+ */
 public class CrawlingProxyNode extends CrawlingNode {
 	
 	private static final Logger logger = LoggerFactory.getLogger(CrawlingProxyNode.class);
@@ -38,7 +37,7 @@ public class CrawlingProxyNode extends CrawlingNode {
 	
 	/**
 	 * 생성자
-	 * @param apiRequest
+	 * @param proxyNodeKey
 	 */
 	public CrawlingProxyNode(String proxyNodeKey){
 		this.proxyNodeKey = proxyNodeKey;

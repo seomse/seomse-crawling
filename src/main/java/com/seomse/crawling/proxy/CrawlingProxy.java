@@ -1,16 +1,4 @@
-/** 
- * <pre>
- *  파 일 명 : CrawlingProxy.java
- *  설    명 : 크롤링 프록시 서버
- *         
- *  작 성 자 : malce
- *  작 성 일 : 2018.04
- *  버    전 : 1.0
- *  수정이력 :
- *  기타사항 :
- * </pre>
- * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
- */
+
 
 package com.seomse.crawling.proxy;
 
@@ -23,7 +11,19 @@ import org.slf4j.LoggerFactory;
 
 import com.seomse.api.ApiCommunication;
 import com.seomse.commons.handler.EndHandler;
-
+/**
+ * <pre>
+ *  파 일 명 : CrawlingProxy.java
+ *  설    명 : 크롤링 프록시 서버
+ *
+ *  작 성 자 : malce
+ *  작 성 일 : 2018.04
+ *  버    전 : 1.0
+ *  수정이력 :
+ *  기타사항 :
+ * </pre>
+ * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
+ */
 public class CrawlingProxy {
 	
 	

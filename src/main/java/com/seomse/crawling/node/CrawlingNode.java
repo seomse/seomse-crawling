@@ -1,16 +1,4 @@
-/** 
- * <pre>
- *  파 일 명 : CrawlingNode.java
- *  설    명 : 크롤링 노드 속성정의
- *            
- *  작 성 자 : macle
- *  작 성 일 : 2018.04
- *  버    전 : 1.0
- *  수정이력 :
- *  기타사항 :
- * </pre>
- * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
- */
+
 package com.seomse.crawling.node;
 
 import java.util.HashMap;
@@ -21,7 +9,19 @@ import org.json.JSONObject;
 import com.seomse.commons.handler.EndHandler;
 import com.seomse.commons.handler.ExceptionHandler;
 import com.seomse.crawling.exception.NodeEndException;
-
+/**
+ * <pre>
+ *  파 일 명 : CrawlingNode.java
+ *  설    명 : 크롤링 노드 속성정의
+ *
+ *  작 성 자 : macle
+ *  작 성 일 : 2018.04
+ *  버    전 : 1.0
+ *  수정이력 :
+ *  기타사항 :
+ * </pre>
+ * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
+ */
 public abstract class CrawlingNode {
 	
 	

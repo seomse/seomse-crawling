@@ -1,17 +1,4 @@
-/** 
- * <pre>
- *  파 일 명 : CrawlingServer.java
- *  설    명 : 크롤링 서버 
- *            - 크롤링 프록시 관리
- *         
- *  작 성 자 : macle
- *  작 성 일 : 2018.04
- *  버    전 : 1.0
- *  수정이력 :
- *  기타사항 :
- * </pre>
- * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
- */
+
 package com.seomse.crawling;
 
 import java.net.InetAddress;
@@ -35,7 +22,20 @@ import com.seomse.crawling.node.CrawlingNode;
 import com.seomse.crawling.node.CrawlingProxyNode;
 import com.seomse.crawling.proxy.CrawlingProxy;
 import com.seomse.crawling.type.http.HttpUrlConnManager;
-
+/**
+ * <pre>
+ *  파 일 명 : CrawlingServer.java
+ *  설    명 : 크롤링 서버
+ *            - 크롤링 프록시 관리
+ *
+ *  작 성 자 : macle
+ *  작 성 일 : 2018.04
+ *  버    전 : 1.0
+ *  수정이력 :
+ *  기타사항 :
+ * </pre>
+ * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
+ */
 public class CrawlingServer {
 	
 	private static final Logger logger = LoggerFactory.getLogger(CrawlingServer.class);
