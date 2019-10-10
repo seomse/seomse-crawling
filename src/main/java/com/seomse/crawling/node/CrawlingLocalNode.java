@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.seomse.commons.utils.ExceptionUtil;
 import com.seomse.crawling.exception.NodeEndException;
-import com.seomse.crawling.type.http.HttpUrl;
+import com.seomse.crawling.core.http.HttpUrl;
 /**
  * <pre>
  *  파 일 명 : CrawlingLocalNode.java

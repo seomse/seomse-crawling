@@ -10,4 +10,4 @@
  * </pre>
  * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
  */
-package com.seomse.crawling.type.api;
+package com.seomse.crawling.core.api;

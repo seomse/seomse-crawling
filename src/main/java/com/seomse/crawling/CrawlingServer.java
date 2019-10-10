@@ -21,7 +21,7 @@ import com.seomse.crawling.node.CrawlingLocalNode;
 import com.seomse.crawling.node.CrawlingNode;
 import com.seomse.crawling.node.CrawlingProxyNode;
 import com.seomse.crawling.proxy.CrawlingProxy;
-import com.seomse.crawling.type.http.HttpUrlConnManager;
+import com.seomse.crawling.core.http.HttpUrlConnManager;
 /**
  * <pre>
  *  파 일 명 : CrawlingServer.java

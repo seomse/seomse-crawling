@@ -12,7 +12,7 @@
  * </pre>
  * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
  */
-package com.seomse.crawling.type.http;
+package com.seomse.crawling.core.http;
 
 import java.util.HashMap;
 import java.util.Map;

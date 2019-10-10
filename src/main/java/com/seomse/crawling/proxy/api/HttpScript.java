@@ -6,7 +6,7 @@ import org.json.JSONObject;
 
 import com.seomse.api.ApiMessage;
 import com.seomse.commons.utils.ExceptionUtil;
-import com.seomse.crawling.type.http.HttpUrl;
+import com.seomse.crawling.core.http.HttpUrl;
 /**
  * <pre>
  *  파 일 명 : HttpScript.java
