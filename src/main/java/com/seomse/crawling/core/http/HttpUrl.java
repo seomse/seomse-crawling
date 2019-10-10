@@ -1,53 +1,38 @@
-/** 
- * <pre>
- *  파 일 명 : HttpUrlScript.java
- *  설    명 : HttpUrlConn을 사용한 스크립트 수집
- *  
- *                    
- *  작 성 자 : macle 
- *  작 성 일 : 2018.04
- *  버    전 : 1.0
- *  수정이력 : 
- *  기타사항 :
- * </pre>
- * @author  Copyrights 2018 by ㈜섬세한사람들. All right reserved.
- */
+
 package com.seomse.crawling.core.http;
-	
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.util.Iterator;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
+import com.seomse.commons.utils.ExceptionUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.seomse.commons.utils.ExceptionUtil;
+import javax.net.ssl.*;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Iterator;
 
-
+/**
+ * <pre>
+ *  파 일 명 : HttpUrlScript.java
+ *  설    명 : HttpUrlConn을 사용한 스크립트 수집
+ *
+ *
+ *  작 성 자 : macle
+ *  작 성 일 : 2018.04
+ *  버    전 : 1.0
+ *  수정이력 :
+ *  기타사항 :
+ * </pre>
+ * @author  Copyrights 2018 by ㈜섬세한사람들. All right reserved.
+ */
 public class HttpUrl {
 
 	private final static Logger logger = LoggerFactory.getLogger(HttpUrl.class);
 	
 	/**
-	 * url에 해당하는 스크립트를 얻어온다.
+	 * url 에 해당하는 스크립트를 얻기
 	 * 
 	 * optionData
 	 * - requestMethod (GET, POST, HEAD, OPTIONS, PUT, DELETE, TRACE)
@@ -57,8 +42,8 @@ public class HttpUrl {
 	 * - readTimeout (def : 30000)
 	 * - connectTimeout (def : 30000)
 	 * 
-	 * @param url
-	 * @return
+	 * @param url url
+	 * @return script (string)
 	 */
 	public static String getScript(String url, JSONObject optionData) throws java.net.SocketTimeoutException{
 	
@@ -107,9 +92,7 @@ public class HttpUrl {
 			try {
 				String req = optionData.getString("requestMethod");
 				conn.setRequestMethod(req);
-			} catch (JSONException e) {
-				logger.error(ExceptionUtil.getStackTrace(e));
-			} catch (ProtocolException e) {
+			} catch (Exception e) {
 				logger.error(ExceptionUtil.getStackTrace(e));
 			}
 		}
@@ -125,22 +108,15 @@ public class HttpUrl {
 		}
 		
 		if(!optionData.isNull("outputStreamValue")) {
-			byte[] content = null;
+			byte[] contents ;
 			try {
 				String outputStreamValue = optionData.getString("outputStreamValue");
-				content = outputStreamValue.getBytes(charSet);
-			} catch (JSONException e) {
-				logger.error(ExceptionUtil.getStackTrace(e));
-			} catch (UnsupportedEncodingException e) {
-				logger.error(ExceptionUtil.getStackTrace(e));
-			}
-			
-			try {
-				OutputStream opstrm = conn.getOutputStream();
-				opstrm.write(content);
-				opstrm.flush();
-				opstrm.close();
-			} catch (IOException e) {
+				contents = outputStreamValue.getBytes(charSet);
+				OutputStream outSteam = conn.getOutputStream();
+				outSteam.write(contents);
+				outSteam.flush();
+				outSteam.close();
+			} catch (Exception e) {
 				logger.error(ExceptionUtil.getStackTrace(e));
 			}
 		}
@@ -172,13 +148,13 @@ public class HttpUrl {
 
 	/**
 	 * HttpURLConnection에 해당하는 스크립트를 얻어온다.
-	 * @param conn
-	 * @param charSet
-	 * @return
+	 * @param conn HttpURLConnection
+	 * @param charSet charSet
+	 * @return  script (string)
 	 */
 	public static String getScript(HttpURLConnection conn, String charSet) throws java.net.SocketTimeoutException{
 		StringBuilder message = new StringBuilder(); 
-		 BufferedReader br= null;
+		BufferedReader br = null;
 		try {
 			if (conn != null && conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
 				
@@ -195,7 +171,7 @@ public class HttpUrl {
 				for (;;) {
 					String line = br.readLine();
 					if (line == null) break;
-					message.append(line + '\n'); 
+					message.append(line).append('\n');
 				}
 			
 			}
@@ -205,8 +181,11 @@ public class HttpUrl {
 		}catch (IOException e) {	
 			logger.error(ExceptionUtil.getStackTrace(e));
 		}finally{
+			//noinspection CatchMayIgnoreException
 			try{
-				br.close();
+				if(br != null) {
+					br.close();
+				}
 			}catch(Exception e){}
 		}
 		
@@ -214,31 +193,34 @@ public class HttpUrl {
 	}
 	
 	/**
-	 * url에 해당하는 파일을 다운받아서 filePath에 저장한다.
-	 * @param addr
-	 * @param filePath
-	 * @return
+	 * url에 해당하는 파일을 다운받아서 filePath 에 저장한다.
+	 * @param urlAddress url address
+	 * @param filePath file path
+	 * @return File
 	 */
-	public static File getFile(String addr, String filePath){
+	public static File getFile(String urlAddress, String filePath){
 	
 		try {
 			File file = null;
-			HttpURLConnection conn = getHttpURLConnection(addr);
+			HttpURLConnection conn = getHttpURLConnection(urlAddress);
 			
 			if (conn != null && conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
 				
 				file = new File(filePath);
+				//noinspection ResultOfMethodCallIgnored
 				file.getParentFile().mkdirs();
-				if(file.exists()){	
-					 file.delete();
+				if(file.exists()){
+					//noinspection ResultOfMethodCallIgnored
+					file.delete();
 			     }
+				//noinspection ResultOfMethodCallIgnored
 				file.createNewFile();
 				
 				InputStream in = conn.getInputStream();			
 			    FileOutputStream fos = new FileOutputStream(file);
 
 		        byte[] buffer = new byte[1024];
-		        int len1 = 0;
+		        int len1 ;
 		        while ((len1 = in.read(buffer)) != -1) {
 		            fos.write(buffer, 0, len1);
 		        }
@@ -256,16 +238,16 @@ public class HttpUrl {
 	
 	
 	/**
-	 * HttpUrlConnection을 생성한다.
-	 * @param addr
-	 * @return
+	 * HttpUrlConnection 을 생성한다.
+	 * @param urlAddr urlAddress
+	 * @return HttpURLConnection
 	 */
-	public static HttpURLConnection getHttpURLConnection(String addr){
+	public static HttpURLConnection getHttpURLConnection(String urlAddr){
 		try {
 			
 			
-			URL url = new URL(addr);			
-			HttpURLConnection conn = null; 
+			URL url = new URL(urlAddr);
+			HttpURLConnection conn ;
 		
             String protocol = url.getProtocol();
             if(protocol == null){
@@ -295,9 +277,7 @@ public class HttpUrl {
             
             return conn;
 		}catch(Exception e){
-			logger.error(ExceptionUtil.getStackTrace(e));
-			
-			return null;
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -310,18 +290,14 @@ public class HttpUrl {
  
                 public void checkClientTrusted( 
                         java.security.cert.X509Certificate[] chain, 
-                        String authType) 
-                        throws java.security.cert.CertificateException { 
-                    // TODO Auto-generated method stub 
-                     
+                        String authType) {
+
                 } 
  
                 public void checkServerTrusted( 
                         java.security.cert.X509Certificate[] chain, 
-                        String authType) 
-                        throws java.security.cert.CertificateException { 
-                    // TODO Auto-generated method stub 
-                     
+                        String authType) {
+
                 } 
         } }; 
  
@@ -335,8 +311,8 @@ public class HttpUrl {
                 e.printStackTrace(); 
         } 
     } 
-     
-    final static HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() { 
+
+	final static HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {
         
 		public boolean verify(String arg0, SSLSession arg1) {
 			// TODO Auto-generated method stub

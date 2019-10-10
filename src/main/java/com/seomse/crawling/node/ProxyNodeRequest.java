@@ -1,15 +1,13 @@
 
 package com.seomse.crawling.node;
 
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.seomse.api.ApiRequest;
 import com.seomse.commons.handler.ExceptionHandler;
 import com.seomse.commons.utils.ExceptionUtil;
-import com.seomse.crawling.exception.NodeEndException;
 import com.seomse.crawling.proxy.api.HttpScript;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * <pre>
  *  파 일 명 : ProxyNodeRequest.java
@@ -28,10 +26,10 @@ public class ProxyNodeRequest {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ProxyNodeRequest.class);
 	
-	private int waitLength = 0;
+	private int waitCount = 0;
 	
-	private Object lock = new Object();
-	private Object waitLock = new Object();
+	private final Object lock = new Object();
+	private final Object waitLock = new Object();
 	
 	private ApiRequest request;
 	
@@ -39,7 +37,6 @@ public class ProxyNodeRequest {
 	
 	/**
 	 * 생성자
-	 * @param request
 	 */
 	ProxyNodeRequest(CrawlingProxyNode crawlingProxyNode
 			, ApiRequest request ){
@@ -50,15 +47,15 @@ public class ProxyNodeRequest {
 	private ExceptionHandler exceptionHandler;
 	/**
 	 * 예외 핸들러 설정
-	 * @param exceptionHandler
+	 * @param exceptionHandler exceptionHandler
 	 */
 	public void setExceptionHandler(ExceptionHandler exceptionHandler) {
 		this.exceptionHandler = exceptionHandler;
 	}
 	
-	public String getHttpUrlScript(String url, JSONObject optionData) throws NodeEndException{
+	public String getHttpUrlScript(String url, JSONObject optionData) {
 		
-		String result = null;
+		String result ;
 		
 		
 		try {
@@ -66,7 +63,7 @@ public class ProxyNodeRequest {
 			messageObj.put("url", url);
 			messageObj.put("setData", optionData);
 			synchronized (waitLock) {
-				waitLength ++ ;
+				waitCount++ ;
 			}
 			synchronized (lock) {
 				try {
@@ -78,10 +75,10 @@ public class ProxyNodeRequest {
 				
 			}
 			synchronized (waitLock) {
-				waitLength -- ;
+				waitCount-- ;
 				//코딩 실수할까봐 방어코드
-				if(waitLength< 0) {
-					waitLength = 0;
+				if(waitCount < 0) {
+					waitCount = 0;
 				}
 			} 
 			if(result.startsWith(HttpScript.SUCCESS)) {
@@ -109,11 +106,11 @@ public class ProxyNodeRequest {
 	
 	
 	/**
-	 * 기다림 길이 얻기
-	 * @return
+	 * wait count get
+	 * @return waitLength
 	 */
-	public int waitLength() {
-		return waitLength;
+	public int getWaitCount() {
+		return waitCount;
 	}
 	
 	/**

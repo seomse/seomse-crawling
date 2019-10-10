@@ -1,10 +1,23 @@
-/** 
+
+package com.seomse.crawling.core.http;
+
+import com.seomse.commons.utils.ExceptionUtil;
+import com.seomse.crawling.CrawlingServer;
+import com.seomse.crawling.exception.NodeEndException;
+import com.seomse.crawling.node.CrawlingNode;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+/**
  * <pre>
  *  파 일 명 : HttpUrlConnManager.java
  *  설    명 : HttpUrlConn으로 붇는정보 관리
  *             server에서 이용하는 httpurlconn이벤트 처리 클래스
  *             소스가 너무 가독성이 떨어지는 경우를 위해서 클래스 분리
- *  작 성 자 : macle 
+ *  작 성 자 : macle
  *  작 성 일 : 2018.04
  *  버    전 : 1.0
  *  수정이력 :
@@ -12,20 +25,6 @@
  * </pre>
  * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
  */
-package com.seomse.crawling.core.http;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.seomse.commons.utils.ExceptionUtil;
-import com.seomse.crawling.CrawlingServer;
-import com.seomse.crawling.exception.NodeEndException;
-import com.seomse.crawling.node.CrawlingNode;
-
 public class HttpUrlConnManager {
 	
 	private static final Logger logger = LoggerFactory.getLogger(HttpUrlConnManager.class);
@@ -36,7 +35,7 @@ public class HttpUrlConnManager {
 	
 	private Map<String, Object> lockMap;
 	
-	private Object lock = new Object();
+	private final Object lock = new Object();
 	
 	/**
 	 * 생성자
@@ -50,12 +49,12 @@ public class HttpUrlConnManager {
 	private boolean isNodeNullLog = true;
 	
 	/**
-	 * Httpurlconnection 을 이용한 script 결과 얻기
-	 * @param checkUrl
-	 * @param connLimitTime
-	 * @param url
-	 * @param setData
-	 * @return
+	 * HttpUrlConnection 을 이용한 script 결과 얻기
+	 * @param checkUrl checkUrl
+	 * @param connLimitTime connLimitTime
+	 * @param url url
+	 * @param setData setData
+	 * @return script (string)
 	 */
 	public String getHttpUrlScript(String checkUrl, long connLimitTime, String url, JSONObject setData) {
 		
@@ -83,6 +82,7 @@ public class HttpUrlConnManager {
 		
 		CrawlingNode node;
 		String script;
+		//noinspection SynchronizationOnLocalVariableOrMethodParameter
 		synchronized (lockObj) {
 			
 			CrawlingNode lastNode = lastNodeMap.get(checkUrl);

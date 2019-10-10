@@ -2,15 +2,13 @@
 
 package com.seomse.crawling.proxy;
 
-import java.io.IOException;
-import java.net.Socket;
-import java.net.UnknownHostException;
-
+import com.seomse.api.ApiCommunication;
+import com.seomse.commons.handler.EndHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.seomse.api.ApiCommunication;
-import com.seomse.commons.handler.EndHandler;
+import java.io.IOException;
+import java.net.Socket;
 /**
  * <pre>
  *  파 일 명 : CrawlingProxy.java
@@ -31,14 +29,12 @@ public class CrawlingProxy {
 	
 	/**
 	 * 생성자
-	 * @param host
-	 * @param port
-	 * @throws UnknownHostException
-	 * @throws IOException
+	 * @param hostAddress hostAddress
+	 * @param port port
 	 */
-	public CrawlingProxy(String host, int port, int communicationCount) throws UnknownHostException, IOException{
+	public CrawlingProxy(String hostAddress, int port, int communicationCount) throws  IOException{
 		for(int i=0 ; i<communicationCount ; i++) {
-			Socket socket = new Socket(host, port);
+			Socket socket = new Socket(hostAddress, port);
 			ApiCommunication apiCommunication = new ApiCommunication("com.seomse.crawling.proxy.api", socket);
 			apiCommunication.setNotLog();
 			apiCommunication.setEndHandler(new EndHandler() {

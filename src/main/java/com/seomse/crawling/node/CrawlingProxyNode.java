@@ -2,16 +2,14 @@
 
 package com.seomse.crawling.node;
 
-import java.util.LinkedList;
-import java.util.List;
-
+import com.seomse.api.ApiRequest;
+import com.seomse.commons.utils.ExceptionUtil;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.seomse.api.ApiRequest;
-import com.seomse.commons.utils.ExceptionUtil;
-import com.seomse.crawling.exception.NodeEndException;
+import java.util.LinkedList;
+import java.util.List;
 /**
  * <pre>
  *  파 일 명 : CrawlingProxyNode.java
@@ -31,13 +29,13 @@ public class CrawlingProxyNode extends CrawlingNode {
 	
 	private List<ProxyNodeRequest> requestList = new LinkedList<>();
 	
-	private Object requestLock = new Object();
+	private final Object requestLock = new Object();
 	
 	private String proxyNodeKey;
 	
 	/**
 	 * 생성자
-	 * @param proxyNodeKey
+	 * @param proxyNodeKey proxyNodeKey
 	 */
 	public CrawlingProxyNode(String proxyNodeKey){
 		this.proxyNodeKey = proxyNodeKey;
@@ -49,7 +47,7 @@ public class CrawlingProxyNode extends CrawlingNode {
 	
 	/**
 	 * ApiRequest(통신 socket) 추가
-	 * @param request
+	 * @param request request
 	 */
 	public void addRequest(ApiRequest request) {
 		ProxyNodeRequest proxyNodeRequest = new ProxyNodeRequest(this, request	);
@@ -75,7 +73,7 @@ public class CrawlingProxyNode extends CrawlingNode {
 	
 	
 	@Override
-	public String getHttpUrlScript(String url, JSONObject optionData) throws NodeEndException{
+	public String getHttpUrlScript(String url, JSONObject optionData) {
 		try {
 			logger.debug("proxy node seq: " + seq);
 			
@@ -88,11 +86,7 @@ public class CrawlingProxyNode extends CrawlingNode {
 			
 			return minRequest.getHttpUrlScript(url, optionData);
 			
-			
-				
-			
-			
-			
+
 		}catch(Exception e) {
 			logger.error(ExceptionUtil.getStackTrace(e));
 			return null;
@@ -109,13 +103,13 @@ public class CrawlingProxyNode extends CrawlingNode {
 		//추가될경우를 대비
 		//제거되는경우는없음 
 		ProxyNodeRequest minRequest = requestList.get(0);
-		int minWaitLength = minRequest.waitLength();
+		int minWaitCount = minRequest.getWaitCount();
 		
 		for(int i=1 ; i<size ; i++) {
 			ProxyNodeRequest request = requestList.get(i);
-			if(minWaitLength > request.waitLength()) {
+			if(minWaitCount > request.getWaitCount()) {
 				minRequest = request;
-				minWaitLength = request.waitLength();
+				minWaitCount = request.getWaitCount();
 			}
 		}
 		
@@ -127,7 +121,7 @@ public class CrawlingProxyNode extends CrawlingNode {
 	
 	/**
 	 * node key 얻기
-	 * @return
+	 * @return NodeKey
 	 */
 	public String getNodeKey() {
 		return proxyNodeKey;

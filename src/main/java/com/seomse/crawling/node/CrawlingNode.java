@@ -37,15 +37,15 @@ public abstract class CrawlingNode {
 	
 	/**
 	 * 종료 핸들러 설정
-	 * @param endHandler
+	 * @param endHandler endHandler
 	 */
 	public void setEndHandler(EndHandler endHandler) {
 		this.endHandler = endHandler;
 	}
 	
 	/**
-	 * node순번 얻기
-	 * @return
+	 * node 순번 얻기
+	 * @return seq
 	 */
 	public int getSeq() {
 		return seq;
@@ -53,8 +53,8 @@ public abstract class CrawlingNode {
 
 
 	/**
-	 * node순번 설정
-	 * @param nodeSeq
+	 * node 순번 설정
+	 * @param nodeSeq nodeSeq
 	 */
 	public void setSeq(int nodeSeq) {
 		this.seq = nodeSeq;
@@ -63,7 +63,7 @@ public abstract class CrawlingNode {
 	protected ExceptionHandler exceptionHandler;
 	/**
 	 * 예외 핸들러 설정
-	 * @param exceptionHandler
+	 * @param exceptionHandler exceptionHandler
 	 */
 	public void setExceptionHandler(ExceptionHandler exceptionHandler) {
 		this.exceptionHandler = exceptionHandler;
@@ -71,7 +71,7 @@ public abstract class CrawlingNode {
 	
 	/**
 	 * 종료여부
-	 * @return
+	 * @return is end
 	 */
 	public boolean isEnd() {
 		return isEnd;
@@ -92,8 +92,8 @@ public abstract class CrawlingNode {
 	private Map<String, Long> lastConnectTimeMap = new HashMap<>();
 	/**
 	 * 마지막 접속 time 얻기
-	 * @param checkUrl
-	 * @return
+	 * @param checkUrl checkUrl
+	 * @return LastConnectTime
 	 */
 	public Long getLastConnectTime(String checkUrl) {
 		return lastConnectTimeMap.get(checkUrl);
@@ -101,58 +101,18 @@ public abstract class CrawlingNode {
 	
 	/**
 	 * 마지막 접속 time 업데이트
-	 * @param checkUrl
+	 * @param checkUrl checkUrl
 	 */
 	public void updateLastConnectTime(String checkUrl) {
 		lastConnectTimeMap.put(checkUrl, System.currentTimeMillis());
 	}
 	
 	/**
-	 * Httpurlconnection 을 이용한 script 결과 얻기
-	 * @param url
-	 * @param jsonObj
-	 * @return
+	 * HttpUrlConnection 을 이용한 script 결과 얻기
+	 * @param url url
+	 * @param optionData optionData
+	 * @return script (string)
 	 */
 	public abstract String getHttpUrlScript(String url, JSONObject optionData) throws NodeEndException ;
-	
-	
-	
-//	public static void main(String [] args) {
-//		final Map<String, Long> test = new HashMap();
-//		test.put("a", 0l);
-//		new Thread() {
-//			public void run() {
-//				while(true) {
-//					System.out.println(test.get("a"));
-//				}
-//			}
-//		}.start();
-//		
-//		new Thread() {
-//			public void run() {
-//				while(true) {
-//					Long t = test.get("a");
-//					t++;
-//					test.put("a", t);
-//				}
-//			}
-//		}.start();
-//		new Thread() {
-//			public void run() {
-//				while(true) {
-//					Long t = test.get("a");
-//					t++;
-//					test.put("a", t);
-//				}
-//			}
-//		}.start();
-//		new Thread() {
-//			public void run() {
-//				while(true) {
-//					System.out.println(test.get("a"));
-//				}
-//			}
-//		}.start();
-//	}
-	
+
 }

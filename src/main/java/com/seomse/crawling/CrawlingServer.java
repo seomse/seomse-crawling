@@ -1,27 +1,26 @@
 
 package com.seomse.crawling;
 
+import com.seomse.api.ApiRequest;
+import com.seomse.api.server.ApiRequestConnectHandler;
+import com.seomse.api.server.ApiRequestServer;
+import com.seomse.commons.handler.EndHandler;
+import com.seomse.commons.handler.ExceptionHandler;
+import com.seomse.crawling.core.http.HttpUrlConnManager;
+import com.seomse.crawling.node.CrawlingLocalNode;
+import com.seomse.crawling.node.CrawlingNode;
+import com.seomse.crawling.node.CrawlingProxyNode;
+import com.seomse.crawling.proxy.CrawlingProxy;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.seomse.api.ApiRequest;
-import com.seomse.api.server.ApiRequestConnectHandler;
-import com.seomse.api.server.ApiRequestServer;
-import com.seomse.commons.handler.EndHandler;
-import com.seomse.commons.handler.ExceptionHandler;
-import com.seomse.crawling.node.CrawlingLocalNode;
-import com.seomse.crawling.node.CrawlingNode;
-import com.seomse.crawling.node.CrawlingProxyNode;
-import com.seomse.crawling.proxy.CrawlingProxy;
-import com.seomse.crawling.core.http.HttpUrlConnManager;
 /**
  * <pre>
  *  파 일 명 : CrawlingServer.java
@@ -48,7 +47,7 @@ public class CrawlingServer {
 	
 	private CrawlingNode [] nodeArray = EMPTY_NODE_ARRAY;
 
-	private Object lock = new Object();
+	private final Object lock = new Object();
 	private EndHandler nodeEndHandler; 	
 	
 	private HttpUrlConnManager httpUrlConnManager;
@@ -58,7 +57,7 @@ public class CrawlingServer {
 	
 	/**
 	 * 생성자
-	 * @param port
+	 * @param port port
 	 */
 	public CrawlingServer(int port){
 		
@@ -95,7 +94,7 @@ public class CrawlingServer {
 				if(isNew) {
 					synchronized (lock) {
 						nodeList.add(crawlingProxyNode);
-						nodeArray = nodeList.toArray(new CrawlingNode[nodeList.size()]);
+						nodeArray = nodeList.toArray(new CrawlingNode[0]);
 						for(int i=0 ; i<nodeArray.length ; i++) {
 							nodeArray[i].setSeq(i);
 						}
@@ -112,7 +111,7 @@ public class CrawlingServer {
 	private ExceptionHandler exceptionHandler;
 	/**
 	 * 예외 핸들러 설정
-	 * @param exceptionHandler
+	 * @param exceptionHandler exceptionHandler
 	 */
 	public void setExceptionHandler(ExceptionHandler exceptionHandler) {
 		this.exceptionHandler = exceptionHandler;
@@ -120,7 +119,7 @@ public class CrawlingServer {
 	
 	/**
 	 * node 종료
-	 * @param crawlingNode
+	 * @param crawlingNode crawlingNode
 	 */
 	public void endNode(CrawlingNode crawlingNode) {
 		synchronized (lock) {	
@@ -128,7 +127,7 @@ public class CrawlingServer {
 				if(nodeList.size() == 0) {
 					nodeArray = EMPTY_NODE_ARRAY;
 				}else {
-					nodeArray = nodeList.toArray(new CrawlingNode[nodeList.size()]);
+					nodeArray = nodeList.toArray(new CrawlingNode[0]);
 					
 					for(int i=0 ; i<nodeArray.length ; i++) {
 						nodeArray[i].setSeq(i);
@@ -161,7 +160,7 @@ public class CrawlingServer {
 			CrawlingLocalNode localNode = new CrawlingLocalNode();
 			localNode.setEndHandler(nodeEndHandler);
 			nodeList.add(localNode);
-			nodeArray = nodeList.toArray(new CrawlingNode[nodeList.size()]);
+			nodeArray = nodeList.toArray(new CrawlingNode[0]);
 			for(int i=0 ; i<nodeArray.length ; i++) {
 				nodeArray[i].setSeq(i);
 			}
@@ -195,12 +194,12 @@ public class CrawlingServer {
 	
 	
 	/**
-	 * Httpurlconnection 을 이용한 script 결과 얻기
-	 * @param checkUrl
-	 * @param connLimitTime
-	 * @param url
-	 * @param optionData
-	 * @return
+	 * HttpUrlConnection 을 이용한 script 결과 얻기
+	 * @param checkUrl checkUrl
+	 * @param connLimitTime connLimitTime
+	 * @param url url
+	 * @param optionData url
+	 * @return script (string)
 	 */
 	public String getHttpUrlScript(String checkUrl, long connLimitTime, String url, JSONObject optionData) {
 		return httpUrlConnManager.getHttpUrlScript(checkUrl, connLimitTime, url, optionData);
@@ -208,7 +207,7 @@ public class CrawlingServer {
 	
 	/**
 	 * 접속가능 node 배열얻기
-	 * @return
+	 * @return NodeArray
 	 */
 	public CrawlingNode [] getNodeArray() {
 		return nodeArray;

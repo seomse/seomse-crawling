@@ -1,15 +1,12 @@
 
 package com.seomse.crawling.node;
 
-import java.net.SocketTimeoutException;
-
+import com.seomse.crawling.core.http.HttpUrl;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.seomse.commons.utils.ExceptionUtil;
-import com.seomse.crawling.exception.NodeEndException;
-import com.seomse.crawling.core.http.HttpUrl;
+import java.net.SocketTimeoutException;
 /**
  * <pre>
  *  파 일 명 : CrawlingLocalNode.java
@@ -28,15 +25,13 @@ public class CrawlingLocalNode extends CrawlingNode {
 	private static final Logger logger = LoggerFactory.getLogger(CrawlingLocalNode.class);
 	
 	@Override
-	public String getHttpUrlScript(String url, JSONObject optionData) throws NodeEndException {
+	public String getHttpUrlScript(String url, JSONObject optionData){
 		logger.debug("local node seq: " + seq);
 		
 		try {
-			String script = HttpUrl.getScript(url, optionData);
-			return script;
+			return HttpUrl.getScript(url, optionData);
 		} catch (SocketTimeoutException e) {
-			ExceptionUtil.exception(e, logger, exceptionHandler);
-			return null;
+			throw new RuntimeException(e);
 		}
 		
 	}
