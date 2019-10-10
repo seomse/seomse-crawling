@@ -1,15 +1,4 @@
-/** 
- * <pre>
- *  설    명 : CollectApiClient.java
- *                    
- *  작 성 자 : yhheo(허영회)
- *  작 성 일 : 2018.12
- *  버    전 : 1.0
- *  수정이력 :
- *  기타사항 :
- * </pre>
- * @author Copyrights 2017 by ㈜섬세한사람들. All right reserved.
- */
+
 package com.seomse.crawling.api;
 
 import java.net.InetAddress;
@@ -22,7 +11,18 @@ import com.seomse.api.ApiRequest;
 import com.seomse.api.server.ApiServer;
 import com.seomse.commons.config.Config;
 import com.seomse.jdbc.JdbcQuery;
-
+/**
+ * <pre>
+ *  설    명 : CollectApiClient.java
+ *
+ *  작 성 자 : yhheo(허영회)
+ *  작 성 일 : 2018.12
+ *  버    전 : 1.0
+ *  수정이력 :
+ *  기타사항 :
+ * </pre>
+ * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
+ */
 public class CollectApiClient {
 	/* HOLDER */
 	private CollectApiClient() {}
@@ -36,7 +36,7 @@ public class CollectApiClient {
 	
 	private String serverIP;
 	private int serverPort;
-	
+
 	public boolean isSaveDataToDatabase() {
 		return saveDataToDatabase;
 	}
@@ -50,7 +50,7 @@ public class CollectApiClient {
 		int serverPort = JdbcQuery.getResultInteger("SELECT VAL_ADDR_PORT FROM TB_COIN_API_SERVER");
 		this.serverIP = serverIP;
 		this.serverPort = serverPort;
-		
+
 		int servicePort = Integer.parseInt(Config.getConfig("seomse.collect.client.service.port"));
 		InetAddress local=null;
 		try {

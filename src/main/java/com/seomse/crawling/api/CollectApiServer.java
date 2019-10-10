@@ -1,27 +1,26 @@
-/** 
+
+package com.seomse.crawling.api;
+
+import com.seomse.api.ApiRequest;
+import com.seomse.api.server.ApiServer;
+import com.seomse.commons.config.Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+/**
  * <pre>
  *  설    명 : CollectApiServer.java
- *                    
+ *
  *  작 성 자 : yhheo(허영회)
  *  작 성 일 : 2018.12
  *  버    전 : 1.0
  *  수정이력 :
  *  기타사항 :
  * </pre>
- * @author Copyrights 2017 by ㈜섬세한사람들. All right reserved.
+ * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
  */
-package com.seomse.crawling.api;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.seomse.api.ApiRequest;
-import com.seomse.api.server.ApiServer;
-import com.seomse.commons.config.Config;
-
 public class CollectApiServer {
 	/* HOLDER */
 	private static class Holder{ public static CollectApiServer INSTANCE = new CollectApiServer(); }
@@ -53,12 +52,14 @@ public class CollectApiServer {
 		
 		ApiServer server = new ApiServer(servicePort, SERVER_PACKAGE);
 		server.start();
-		
 
+
+		//noinspection Convert2Lambda
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				while(true) {
+					//noinspection CatchMayIgnoreException
 					try { Thread.sleep(WAITING_TIME); } catch (InterruptedException e) { }
 					checkClientList();
 //					checkServerList();
@@ -75,9 +76,9 @@ public class CollectApiServer {
 		public int PORT;
 	}
 	
-	private static final Long WAITING_TIME = 5000l;
+	private static final Long WAITING_TIME = 5000L;
 	
-	private List<ClientInfo> clientList = new ArrayList<ClientInfo>();
+	private List<ClientInfo> clientList = new ArrayList<>();
 	
 	private final static Object lock = new Object();
 	
@@ -127,7 +128,7 @@ public class CollectApiServer {
 					liveClient = null;
 				}
 			}
-			List<ClientInfo> removeList = new ArrayList<ClientInfo>();
+			List<ClientInfo> removeList = new ArrayList<>();
 			for(ClientInfo client : clientList) {
 				boolean statusOK = checkClientStatus(client);
 				if(statusOK) {

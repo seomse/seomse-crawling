@@ -1,15 +1,4 @@
-/** 
- * <pre>
- *  설    명 : BrowserCollect.java
- *                    
- *  작 성 자 : yh.heo(허영회)
- *  작 성 일 : 2018. 11. 26.
- *  버    전 : 1.0
- *  수정이력 :
- *  기타사항 :
- * </pre>
- * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
- */
+
 package com.seomse.crawling.engine.chrome;
 
 import java.io.File;
@@ -24,7 +13,18 @@ import com.seomse.commons.config.Config;
 import com.seomse.commons.utils.ExceptionUtil;
 import com.seomse.crawling.api.CollectApiClient;
 import com.seomse.jdbc.naming.JdbcNaming;
-
+/**
+ * <pre>
+ *  설    명 : BrowserCollect.java
+ *
+ *  작 성 자 : yh.heo(허영회)
+ *  작 성 일 : 2018. 11. 26.
+ *  버    전 : 1.0
+ *  수정이력 :
+ *  기타사항 :
+ * </pre>
+ * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
+ */
 public abstract class BrowserCollect {
 	
 	private final static Logger logger = LoggerFactory.getLogger(BrowserCollect.class);

@@ -1,17 +1,4 @@
-/** 
- * <pre>
- *  파 일 명 : HttpUrlConnManager.java
- *  설    명 : HttpUrlConn으로 붇는정보 관리
- *             server에서 이용하는 httpurlconn이벤트 처리 클래스
- *             소스가 너무 가독성이 떨어지는 경우를 위해서 클래스 분리
- *  작 성 자 : macle 
- *  작 성 일 : 2018.04
- *  버    전 : 1.0
- *  수정이력 :
- *  기타사항 :
- * </pre>
- * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
- */
+
 package com.seomse.crawling.engine.http;
 
 import java.util.HashMap;
