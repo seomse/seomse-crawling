@@ -15,8 +15,8 @@ import java.util.Iterator;
 
 /**
  * <pre>
- *  파 일 명 : HttpUrlScript.java
- *  설    명 : HttpUrlConn을 사용한 스크립트 수집
+ *  파 일 명 : HttpUrl.java
+ *  설    명 : HttpUrlConnection 을 사용한 스크립트 수집
  *
  *
  *  작 성 자 : macle

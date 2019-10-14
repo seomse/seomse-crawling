@@ -14,8 +14,8 @@ import java.util.Map;
 /**
  * <pre>
  *  파 일 명 : HttpUrlConnManager.java
- *  설    명 : HttpUrlConn으로 붇는정보 관리
- *             server에서 이용하는 httpurlconn이벤트 처리 클래스
+ *  설    명 :  HttpUrlConnection 으로 붇는정보 관리
+ *             server 에서 이용하는 HttpUrlConnection 이벤트 처리 클래스
  *             소스가 너무 가독성이 떨어지는 경우를 위해서 클래스 분리
  *  작 성 자 : macle
  *  작 성 일 : 2018.04

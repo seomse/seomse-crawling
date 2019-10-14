@@ -3,7 +3,7 @@ package com.seomse.crawling.exception;
 /**
  * <pre>
  *  파 일 명 : NodeEndException.java
- *  설    명 : node가 종료되어있을때 발생하는 예외
+ *  설    명 : node 가 종료되어있을때 발생하는 예외
  *
  *  작 성 자 : macle
  *  작 성 일 : 2018.04
