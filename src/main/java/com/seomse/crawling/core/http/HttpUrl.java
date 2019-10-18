@@ -71,46 +71,45 @@ public class HttpUrl {
 		if(optionData == null) {
 			return getScript(conn, null);
 		}
-		if(!optionData.isNull("requestProperty")) {
+		if(!optionData.isNull(HttpOptionDataKey.REQUEST_PROPERTY)) {
 			try {
-				JSONObject property = optionData.getJSONObject("requestProperty");
-				@SuppressWarnings("unchecked")
+				JSONObject property = optionData.getJSONObject(HttpOptionDataKey.REQUEST_PROPERTY);
 				Iterator<String> keys =  property.keys();
 				while(keys.hasNext()) {
 					String key = keys.next();
-					
+
 					conn.setRequestProperty(key, property.getString(key));
 				}
-				
+
 			}catch(Exception e) {
 				logger.error(ExceptionUtil.getStackTrace(e));
 			}
-			
+
 		}
-		
-		if(!optionData.isNull("requestMethod")) {
+
+		if(!optionData.isNull(HttpOptionDataKey.REQUEST_METHOD)) {
 			try {
-				String req = optionData.getString("requestMethod");
+				String req = optionData.getString(HttpOptionDataKey.REQUEST_METHOD);
 				conn.setRequestMethod(req);
 			} catch (Exception e) {
 				logger.error(ExceptionUtil.getStackTrace(e));
 			}
 		}
-		
+
 		String charSet = "UTF-8";
-		
-		if(!optionData.isNull("charSet")) {
+
+		if(!optionData.isNull(HttpOptionDataKey.CHARACTER_SET)) {
 			try {
-				charSet = optionData.getString("charSet");
+				charSet = optionData.getString(HttpOptionDataKey.CHARACTER_SET);
 			} catch (JSONException e) {
 				logger.error(ExceptionUtil.getStackTrace(e));
 			}
 		}
-		
-		if(!optionData.isNull("outputStreamValue")) {
+
+		if(!optionData.isNull(HttpOptionDataKey.OUTPUT_STREAM_WRITE)) {
 			byte[] contents ;
 			try {
-				String outputStreamValue = optionData.getString("outputStreamValue");
+				String outputStreamValue = optionData.getString(HttpOptionDataKey.OUTPUT_STREAM_WRITE);
 				contents = outputStreamValue.getBytes(charSet);
 				OutputStream outSteam = conn.getOutputStream();
 				outSteam.write(contents);
@@ -120,21 +119,21 @@ public class HttpUrl {
 				logger.error(ExceptionUtil.getStackTrace(e));
 			}
 		}
-		
+
 		int readTimeout = 30000;
-		if(!optionData.isNull("readTimeout")) {
+		if(!optionData.isNull(HttpOptionDataKey.READ_TIME_OUT)) {
 			try {
-				readTimeout = optionData.getInt("readTimeout");
+				readTimeout = optionData.getInt(HttpOptionDataKey.READ_TIME_OUT);
 			} catch (JSONException e) {
 				logger.error(ExceptionUtil.getStackTrace(e));
 			}
 		}
 		conn.setReadTimeout(readTimeout);
-		
+
 		int connectTimeout = 30000;
-		if(!optionData.isNull("connectTimeout")) {
+		if(!optionData.isNull(HttpOptionDataKey.CONNECT_TIME_OUT)) {
 			try {
-				connectTimeout = optionData.getInt("connectTimeout");
+				connectTimeout = optionData.getInt(HttpOptionDataKey.CONNECT_TIME_OUT);
 			} catch (JSONException e) {
 				logger.error(ExceptionUtil.getStackTrace(e));
 			}
