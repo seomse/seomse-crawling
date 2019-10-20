@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties version="1.0">
+	
+	<!-- 
+	   파 일 명 : seomse_config.xml
+	   설    명 : 크롤링 관련 설정정보
+	                     
+	   작 성 자 : macle(김용수)
+	   작 성 일 : 2019.10.20 (설정파일)
+	   버    전 : 1.0
+	   수정이력 :  
+	   기타사항 :	
+	  @author Copyrights 2019 by ㈜ 섬세한사람들. All right reserved.
+ 	-->
+
+	<!-- -->
+	<entry key="crawling.server.port">33301</entry>
+	<entry key="crawling.server.local.node.flag">Y</entry>
+
+
+</properties>
