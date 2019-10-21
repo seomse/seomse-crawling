@@ -48,7 +48,7 @@ public class HttpUrl {
 
 
 		try {
-			HttpURLConnection conn = getHttpURLConnection(url);
+			HttpURLConnection conn = getHttpURLConnection(url, optionData);
 			try {
 				int MAX_REDIRECT_COUNT = 3;
 				for (int i = 0; i < MAX_REDIRECT_COUNT; i++) {
@@ -56,7 +56,7 @@ public class HttpUrl {
 							|| conn.getResponseCode() == HttpsURLConnection.HTTP_MOVED_PERM) {
 						// Redirected URL 받아오기
 						String redirectedUrl = conn.getHeaderField("Location");
-						conn = getHttpURLConnection(redirectedUrl);
+						conn = getHttpURLConnection(redirectedUrl, optionData);
 					} else {
 						break;
 					}
@@ -66,11 +66,172 @@ public class HttpUrl {
 				logger.error(e.getMessage());
 			}
 
+			String charSet = "UTF-8";
+
+			if (optionData!= null && !optionData.isNull(HttpOptionDataKey.CHARACTER_SET)) {
+				try {
+					charSet = optionData.getString(HttpOptionDataKey.CHARACTER_SET);
+				} catch (JSONException e) {
+					logger.error(ExceptionUtil.getStackTrace(e));
+				}
+			}
+
+			return getScript(conn, charSet);
+		}catch(SocketTimeoutException e){
+			return HttpError.SOCKET_TIME_OUT.message() +"{" + ExceptionUtil.getStackTrace(e) + "}";
+		}catch(ConnectException e){
+			return HttpError.CONNECT_FAIL.message() +"{" + ExceptionUtil.getStackTrace(e) + "}";
+		}catch(IOException e){
+			return HttpError.IO.message() +"{" + ExceptionUtil.getStackTrace(e) + "}";
+		}catch(Exception e){
+			return HttpError.ERROR.message() +"{" + ExceptionUtil.getStackTrace(e) + "}";
+		}
+	}
+
+
+
+	/**
+	 * HttpURLConnection에 해당하는 스크립트를 얻어온다.
+	 * @param conn HttpURLConnection
+	 * @param charSet charSet
+	 * @return  script (string)
+	 */
+	public static String getScript(HttpURLConnection conn, String charSet) throws IOException {
+		StringBuilder message = new StringBuilder(); 
+		BufferedReader br = null;
+		try {
+			if (conn != null && conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+				
+				
+				
+				if(charSet ==null){
+					br = new BufferedReader(
+						new InputStreamReader(conn.getInputStream()));
+				}else{
+					br = new BufferedReader(
+							new InputStreamReader(conn.getInputStream(), charSet));
+				}
+						
+				for (;;) {
+					String line = br.readLine();
+					if (line == null) break;
+					message.append(line).append('\n');
+				}
+
+
+				if(message.length()>0){
+					//마지막 엔터제거
+					message.setLength(message.length()-1);
+				}
+			}
+		}catch(SocketTimeoutException | ConnectException te){
+			throw te;
+		} catch (Exception e) {
+			logger.error(ExceptionUtil.getStackTrace(e));
+			throw e;
+		}finally{
+			//noinspection CatchMayIgnoreException
+			try{
+				if(br != null) {
+					br.close();
+				}
+			}catch(Exception e){}
+		}
+		
+		return message.toString();
+	}
+	
+	/**
+	 * url에 해당하는 파일을 다운받아서 filePath 에 저장한다.
+	 * @param urlAddress url address
+	 * @param filePath file path
+	 * @return File
+	 */
+	public static File getFile(String urlAddress, String filePath) throws IOException {
+		InputStream in = null;
+		FileOutputStream fos = null ;
+		//noinspection CaughtExceptionImmediatelyRethrown
+		try {
+			File file = null;
+			HttpURLConnection conn = getHttpURLConnection(urlAddress, null);
+			
+			if (conn != null && conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+				
+				file = new File(filePath);
+				//noinspection ResultOfMethodCallIgnored
+				file.getParentFile().mkdirs();
+				if(file.exists()){
+					//noinspection ResultOfMethodCallIgnored
+					file.delete();
+			     }
+				//noinspection ResultOfMethodCallIgnored
+				file.createNewFile();
+				in = conn.getInputStream();
+				fos = new FileOutputStream(file);
+
+		        byte[] buffer = new byte[1024];
+		        int len1 ;
+		        while ((len1 = in.read(buffer)) != -1) {
+		            fos.write(buffer, 0, len1);
+		        }
+		        fos.close();
+		        in.close();
+				conn.disconnect();
+			}
+			return file;
+		} 
+		catch (IOException e) {
+
+			throw e;
+		}finally{
+			if(in != null){
+				//noinspection CatchMayIgnoreException
+				try{in.close();}catch(Exception e){}
+			}
+			if(fos != null){
+				//noinspection CatchMayIgnoreException
+				try{fos.close();}catch(Exception e){}
+			}
+		}
+	}
+	
+	
+	/**
+	 * HttpUrlConnection 을 생성한다.
+	 * @param urlAddr urlAddress
+	 * @return HttpURLConnection
+	 */
+	public static HttpURLConnection getHttpURLConnection(String urlAddr,  JSONObject optionData) throws IOException {
+
+	 	URL url = new URL(urlAddr);
+	 	HttpURLConnection conn ;
+
+        String protocol = url.getProtocol();
+        if(protocol == null){
+        	protocol = "";
+        }
+        protocol = protocol.toLowerCase();
+
+        if (protocol.equals("https")) {
+            trustAllHosts();
+            HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
+            https.setHostnameVerifier(DO_NOT_VERIFY);
+            conn = https;
+        } else {
+        	conn = (HttpURLConnection) url.openConnection();
+        }
+
+        if (conn != null) {
+	 		conn.setUseCaches(false);
+	 		conn.setDoInput( true ) ;
+	 		conn.setDoOutput( true ) ;
+	 		conn.setInstanceFollowRedirects( false );
+
 			int connectTimeout = 30000;
 			if (optionData == null) {
-				conn.setRequestMethod("GET");
 				conn.setConnectTimeout(connectTimeout);
-				return getScript(conn, null);
+				conn.setRequestMethod("GET");
+				return conn;
 			}
 			if (!optionData.isNull(HttpOptionDataKey.REQUEST_PROPERTY)) {
 				try {
@@ -144,152 +305,6 @@ public class HttpUrl {
 			}
 
 			conn.setConnectTimeout(connectTimeout);
-
-			return getScript(conn, charSet);
-		}catch(SocketTimeoutException e){
-			return HttpError.SOCKET_TIME_OUT.message() +"{" + ExceptionUtil.getStackTrace(e) + "}";
-		}catch(ConnectException e){
-			return HttpError.CONNECT_FAIL.message() +"{" + ExceptionUtil.getStackTrace(e) + "}";
-		}catch(IOException e){
-			return HttpError.IO.message() +"{" + ExceptionUtil.getStackTrace(e) + "}";
-		}catch(Exception e){
-			return HttpError.ERROR.message() +"{" + ExceptionUtil.getStackTrace(e) + "}";
-		}
-	}
-
-
-
-	/**
-	 * HttpURLConnection에 해당하는 스크립트를 얻어온다.
-	 * @param conn HttpURLConnection
-	 * @param charSet charSet
-	 * @return  script (string)
-	 */
-	public static String getScript(HttpURLConnection conn, String charSet) throws IOException {
-		StringBuilder message = new StringBuilder(); 
-		BufferedReader br = null;
-		try {
-			if (conn != null && conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				
-				
-				
-				if(charSet ==null){
-					br = new BufferedReader(
-						new InputStreamReader(conn.getInputStream()));
-				}else{
-					br = new BufferedReader(
-							new InputStreamReader(conn.getInputStream(), charSet));
-				}
-						
-				for (;;) {
-					String line = br.readLine();
-					if (line == null) break;
-					message.append(line).append('\n');
-				}
-			
-			}
-		}catch(SocketTimeoutException | ConnectException te){
-			throw te;
-		} catch (Exception e) {
-			logger.error(ExceptionUtil.getStackTrace(e));
-			throw e;
-		}finally{
-			//noinspection CatchMayIgnoreException
-			try{
-				if(br != null) {
-					br.close();
-				}
-			}catch(Exception e){}
-		}
-		
-		return message.toString();
-	}
-	
-	/**
-	 * url에 해당하는 파일을 다운받아서 filePath 에 저장한다.
-	 * @param urlAddress url address
-	 * @param filePath file path
-	 * @return File
-	 */
-	public static File getFile(String urlAddress, String filePath) throws IOException {
-		InputStream in = null;
-		FileOutputStream fos = null ;
-		//noinspection CaughtExceptionImmediatelyRethrown
-		try {
-			File file = null;
-			HttpURLConnection conn = getHttpURLConnection(urlAddress);
-			
-			if (conn != null && conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				
-				file = new File(filePath);
-				//noinspection ResultOfMethodCallIgnored
-				file.getParentFile().mkdirs();
-				if(file.exists()){
-					//noinspection ResultOfMethodCallIgnored
-					file.delete();
-			     }
-				//noinspection ResultOfMethodCallIgnored
-				file.createNewFile();
-				in = conn.getInputStream();
-				fos = new FileOutputStream(file);
-
-		        byte[] buffer = new byte[1024];
-		        int len1 ;
-		        while ((len1 = in.read(buffer)) != -1) {
-		            fos.write(buffer, 0, len1);
-		        }
-		        fos.close();
-		        in.close();
-				conn.disconnect();
-			}
-			return file;
-		} 
-		catch (IOException e) {
-
-			throw e;
-		}finally{
-			if(in != null){
-				//noinspection CatchMayIgnoreException
-				try{in.close();}catch(Exception e){}
-			}
-			if(fos != null){
-				//noinspection CatchMayIgnoreException
-				try{fos.close();}catch(Exception e){}
-			}
-		}
-	}
-	
-	
-	/**
-	 * HttpUrlConnection 을 생성한다.
-	 * @param urlAddr urlAddress
-	 * @return HttpURLConnection
-	 */
-	public static HttpURLConnection getHttpURLConnection(String urlAddr) throws IOException {
-
-	 	URL url = new URL(urlAddr);
-	 	HttpURLConnection conn ;
-
-        String protocol = url.getProtocol();
-        if(protocol == null){
-        	protocol = "";
-        }
-        protocol = protocol.toLowerCase();
-
-        if (protocol.equals("https")) {
-            trustAllHosts();
-            HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
-            https.setHostnameVerifier(DO_NOT_VERIFY);
-            conn = https;
-        } else {
-        	conn = (HttpURLConnection) url.openConnection();
-        }
-
-        if (conn != null) {
-	 		conn.setUseCaches(false);
-	 		conn.setDoInput( true ) ;
-	 		conn.setDoOutput( true ) ;
-	 		conn.setInstanceFollowRedirects( false );
         }
 
         return conn;
