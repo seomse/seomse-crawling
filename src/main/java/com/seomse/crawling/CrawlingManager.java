@@ -34,7 +34,7 @@ public class CrawlingManager {
      * 크롤링 서버
      */
     private CrawlingManager(){
-        CrawlingServer crawlingServer = new CrawlingServer(Config.getInteger("crawling.server.port", 33301));
+        crawlingServer = new CrawlingServer(Config.getInteger("crawling.server.port", 33301));
         if(Config.getBoolean("crawling.server.local.node.flag",true)) {
             crawlingServer.setLocalNode();
         }
