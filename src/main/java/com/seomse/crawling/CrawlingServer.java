@@ -195,10 +195,10 @@ public class CrawlingServer {
 	
 	/**
 	 * HttpUrlConnection 을 이용한 script 결과 얻기
-	 * @param checkUrl checkUrl
-	 * @param connLimitTime connLimitTime
-	 * @param url url
-	 * @param optionData url
+	 * @param checkUrl checkUrl 재연결 체크를할 대표 url
+	 * @param connLimitTime connLimitTime 재연결 시도시간
+	 * @param url 실제 접속 url
+	 * @param optionData 옵션데이터
 	 * @return script (string)
 	 */
 	public String getHttpUrlScript(String checkUrl, long connLimitTime, String url, JSONObject optionData) {
