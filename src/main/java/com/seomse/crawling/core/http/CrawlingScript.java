@@ -10,7 +10,7 @@ import com.seomse.commons.utils.string.Remove;
  *  설    명 : 크롤링된 스크립트 분석
  *
  *
- *  작 성 자 : macle (김용수)
+ *  작 성 자 : macle
  *  작 성 일 : 2019.10.18
  *  버    전 : 1.0
  *  수정이력 :

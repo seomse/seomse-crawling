@@ -5,7 +5,7 @@ package com.seomse.crawling.core.http;
  *  설    명 : 에러 관련 메시지
  *
  *
- *  작 성 자 : macle (김용수)
+ *  작 성 자 : macle
  *  작 성 일 : 2019.10.21
  *  버    전 : 1.0
  *  수정이력 :

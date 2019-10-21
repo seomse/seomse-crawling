@@ -6,7 +6,7 @@ package com.seomse.crawling.core.http;
  *  설    명 : http 크롤링을 활용할때 옵션 데이터 키값 정리
  *
  *
- *  작 성 자 : macle (김용수)
+ *  작 성 자 : macle
  *  작 성 일 : 2019.10.18
  *  버    전 : 1.0
  *  수정이력 :
