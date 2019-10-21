@@ -16,7 +16,7 @@ import com.seomse.commons.utils.string.Remove;
  *  수정이력 :
  *  기타사항 :
  * </pre>
- * @author  Copyrights 2019 by ㈜모아라. All right reserved.
+ * @author  Copyrights 2019 by ㈜섬세한사람들. All right reserved.
  */
 public class CrawlingScript {
 	private String script;
@@ -36,7 +36,7 @@ public class CrawlingScript {
 	 * @return 사이값
 	 */
 	public String getValue(String start, String end){
-		
+
 		int startIndex = script.indexOf(start);
 		if(startIndex == -1){
 			return null;

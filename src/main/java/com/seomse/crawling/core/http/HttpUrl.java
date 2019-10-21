@@ -9,8 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.*;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.*;
 import java.util.Iterator;
 
 /**
@@ -33,7 +32,7 @@ public class HttpUrl {
 	
 	/**
 	 * url 에 해당하는 스크립트를 얻기
-	 * 
+	 * 통신용이기 때문에 오류처리에 대한 메시지도 정의함
 	 * optionData
 	 * - requestMethod (GET, POST, HEAD, OPTIONS, PUT, DELETE, TRACE)
 	 * - requestProperty (+Cookie)
@@ -45,105 +44,120 @@ public class HttpUrl {
 	 * @param url url
 	 * @return script (string)
 	 */
-	public static String getScript(String url, JSONObject optionData) throws java.net.SocketTimeoutException{
-	
-		HttpURLConnection conn = getHttpURLConnection(url);
-//		HttpURLConnection conn = getHttpURLConnection(url);
+	public static String getScript(String url, JSONObject optionData) {
+
+
 		try {
-			int MAX_REDIRECT_COUNT = 3;
-			for(int i=0;i<MAX_REDIRECT_COUNT;i++) {
-				if( conn.getResponseCode() == HttpsURLConnection.HTTP_MOVED_TEMP
-				          || conn.getResponseCode() == HttpsURLConnection.HTTP_MOVED_PERM )
-				{
-				    // Redirected URL 받아오기
-				    String redirectedUrl = conn.getHeaderField("Location");
-				    conn = getHttpURLConnection(redirectedUrl);
-				} else {
-					break;
-				}
-			}
-			
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-		}
-		
-		
-		if(optionData == null) {
-			return getScript(conn, null);
-		}
-		if(!optionData.isNull(HttpOptionDataKey.REQUEST_PROPERTY)) {
+			HttpURLConnection conn = getHttpURLConnection(url);
 			try {
-				JSONObject property = optionData.getJSONObject(HttpOptionDataKey.REQUEST_PROPERTY);
-				Iterator<String> keys =  property.keys();
-				while(keys.hasNext()) {
-					String key = keys.next();
-
-					conn.setRequestProperty(key, property.getString(key));
+				int MAX_REDIRECT_COUNT = 3;
+				for (int i = 0; i < MAX_REDIRECT_COUNT; i++) {
+					if (conn.getResponseCode() == HttpsURLConnection.HTTP_MOVED_TEMP
+							|| conn.getResponseCode() == HttpsURLConnection.HTTP_MOVED_PERM) {
+						// Redirected URL 받아오기
+						String redirectedUrl = conn.getHeaderField("Location");
+						conn = getHttpURLConnection(redirectedUrl);
+					} else {
+						break;
+					}
 				}
 
-			}catch(Exception e) {
-				logger.error(ExceptionUtil.getStackTrace(e));
+			} catch (IOException e) {
+				logger.error(e.getMessage());
 			}
 
-		}
-
-		if(!optionData.isNull(HttpOptionDataKey.REQUEST_METHOD)) {
-			try {
-				String req = optionData.getString(HttpOptionDataKey.REQUEST_METHOD);
-				conn.setRequestMethod(req);
-			} catch (Exception e) {
-				logger.error(ExceptionUtil.getStackTrace(e));
+			int connectTimeout = 30000;
+			if (optionData == null) {
+				conn.setRequestMethod("GET");
+				conn.setConnectTimeout(connectTimeout);
+				return getScript(conn, null);
 			}
-		}
+			if (!optionData.isNull(HttpOptionDataKey.REQUEST_PROPERTY)) {
+				try {
+					JSONObject property = optionData.getJSONObject(HttpOptionDataKey.REQUEST_PROPERTY);
+					//noinspection unchecked
+					Iterator<String> keys = property.keys();
+					while (keys.hasNext()) {
+						String key = keys.next();
 
-		String charSet = "UTF-8";
+						conn.setRequestProperty(key, property.getString(key));
+					}
 
-		if(!optionData.isNull(HttpOptionDataKey.CHARACTER_SET)) {
-			try {
-				charSet = optionData.getString(HttpOptionDataKey.CHARACTER_SET);
-			} catch (JSONException e) {
-				logger.error(ExceptionUtil.getStackTrace(e));
+				} catch (Exception e) {
+					logger.error(ExceptionUtil.getStackTrace(e));
+				}
+
 			}
-		}
 
-		if(!optionData.isNull(HttpOptionDataKey.OUTPUT_STREAM_WRITE)) {
-			byte[] contents ;
-			try {
-				String outputStreamValue = optionData.getString(HttpOptionDataKey.OUTPUT_STREAM_WRITE);
-				contents = outputStreamValue.getBytes(charSet);
-				OutputStream outSteam = conn.getOutputStream();
-				outSteam.write(contents);
-				outSteam.flush();
-				outSteam.close();
-			} catch (Exception e) {
-				logger.error(ExceptionUtil.getStackTrace(e));
+			if (!optionData.isNull(HttpOptionDataKey.REQUEST_METHOD)) {
+				try {
+					String req = optionData.getString(HttpOptionDataKey.REQUEST_METHOD);
+					conn.setRequestMethod(req);
+				} catch (Exception e) {
+					logger.error(ExceptionUtil.getStackTrace(e));
+				}
+			} else {
+				conn.setRequestMethod("GET");
 			}
-		}
 
-		int readTimeout = 30000;
-		if(!optionData.isNull(HttpOptionDataKey.READ_TIME_OUT)) {
-			try {
-				readTimeout = optionData.getInt(HttpOptionDataKey.READ_TIME_OUT);
-			} catch (JSONException e) {
-				logger.error(ExceptionUtil.getStackTrace(e));
-			}
-		}
-		conn.setReadTimeout(readTimeout);
+			String charSet = "UTF-8";
 
-		int connectTimeout = 30000;
-		if(!optionData.isNull(HttpOptionDataKey.CONNECT_TIME_OUT)) {
-			try {
-				connectTimeout = optionData.getInt(HttpOptionDataKey.CONNECT_TIME_OUT);
-			} catch (JSONException e) {
-				logger.error(ExceptionUtil.getStackTrace(e));
+			if (!optionData.isNull(HttpOptionDataKey.CHARACTER_SET)) {
+				try {
+					charSet = optionData.getString(HttpOptionDataKey.CHARACTER_SET);
+				} catch (JSONException e) {
+					logger.error(ExceptionUtil.getStackTrace(e));
+				}
 			}
+
+			if (!optionData.isNull(HttpOptionDataKey.OUTPUT_STREAM_WRITE)) {
+				byte[] contents;
+				try {
+					String outputStreamValue = optionData.getString(HttpOptionDataKey.OUTPUT_STREAM_WRITE);
+					contents = outputStreamValue.getBytes(charSet);
+					OutputStream outSteam = conn.getOutputStream();
+					outSteam.write(contents);
+					outSteam.flush();
+					outSteam.close();
+				} catch (Exception e) {
+					logger.error(ExceptionUtil.getStackTrace(e));
+				}
+			}
+
+			int readTimeout = 30000;
+			if (!optionData.isNull(HttpOptionDataKey.READ_TIME_OUT)) {
+				try {
+					readTimeout = optionData.getInt(HttpOptionDataKey.READ_TIME_OUT);
+				} catch (JSONException e) {
+					logger.error(ExceptionUtil.getStackTrace(e));
+				}
+			}
+			conn.setReadTimeout(readTimeout);
+
+
+			if (!optionData.isNull(HttpOptionDataKey.CONNECT_TIME_OUT)) {
+				try {
+					connectTimeout = optionData.getInt(HttpOptionDataKey.CONNECT_TIME_OUT);
+				} catch (JSONException e) {
+					logger.error(ExceptionUtil.getStackTrace(e));
+				}
+			}
+
+			conn.setConnectTimeout(connectTimeout);
+
+			return getScript(conn, charSet);
+		}catch(SocketTimeoutException e){
+			return HttpError.SOCKET_TIME_OUT.message() +"{" + ExceptionUtil.getStackTrace(e) + "}";
+		}catch(ConnectException e){
+			return HttpError.CONNECT_FAIL.message() +"{" + ExceptionUtil.getStackTrace(e) + "}";
+		}catch(IOException e){
+			return HttpError.IO.message() +"{" + ExceptionUtil.getStackTrace(e) + "}";
+		}catch(Exception e){
+			return HttpError.ERROR.message() +"{" + ExceptionUtil.getStackTrace(e) + "}";
 		}
-		
-		conn.setConnectTimeout(connectTimeout);
-		
-		return getScript(conn, charSet);
 	}
-	
+
+
 
 	/**
 	 * HttpURLConnection에 해당하는 스크립트를 얻어온다.
@@ -151,7 +165,7 @@ public class HttpUrl {
 	 * @param charSet charSet
 	 * @return  script (string)
 	 */
-	public static String getScript(HttpURLConnection conn, String charSet) throws java.net.SocketTimeoutException{
+	public static String getScript(HttpURLConnection conn, String charSet) throws IOException {
 		StringBuilder message = new StringBuilder(); 
 		BufferedReader br = null;
 		try {
@@ -174,11 +188,11 @@ public class HttpUrl {
 				}
 			
 			}
-		}catch(java.net.SocketTimeoutException te){
-			logger.info("Exception throws java.net.SocketTimeoutException: " + te.getMessage() );
+		}catch(SocketTimeoutException | ConnectException te){
 			throw te;
-		}catch (IOException e) {	
+		} catch (Exception e) {
 			logger.error(ExceptionUtil.getStackTrace(e));
+			throw e;
 		}finally{
 			//noinspection CatchMayIgnoreException
 			try{
@@ -197,8 +211,10 @@ public class HttpUrl {
 	 * @param filePath file path
 	 * @return File
 	 */
-	public static File getFile(String urlAddress, String filePath){
-	
+	public static File getFile(String urlAddress, String filePath) throws IOException {
+		InputStream in = null;
+		FileOutputStream fos = null ;
+		//noinspection CaughtExceptionImmediatelyRethrown
 		try {
 			File file = null;
 			HttpURLConnection conn = getHttpURLConnection(urlAddress);
@@ -214,9 +230,8 @@ public class HttpUrl {
 			     }
 				//noinspection ResultOfMethodCallIgnored
 				file.createNewFile();
-				
-				InputStream in = conn.getInputStream();			
-			    FileOutputStream fos = new FileOutputStream(file);
+				in = conn.getInputStream();
+				fos = new FileOutputStream(file);
 
 		        byte[] buffer = new byte[1024];
 		        int len1 ;
@@ -229,9 +244,18 @@ public class HttpUrl {
 			}
 			return file;
 		} 
-		catch (Exception e) {
-			e.printStackTrace();
-			return null;
+		catch (IOException e) {
+
+			throw e;
+		}finally{
+			if(in != null){
+				//noinspection CatchMayIgnoreException
+				try{in.close();}catch(Exception e){}
+			}
+			if(fos != null){
+				//noinspection CatchMayIgnoreException
+				try{fos.close();}catch(Exception e){}
+			}
 		}
 	}
 	
@@ -241,43 +265,34 @@ public class HttpUrl {
 	 * @param urlAddr urlAddress
 	 * @return HttpURLConnection
 	 */
-	public static HttpURLConnection getHttpURLConnection(String urlAddr){
-		try {
-			
-			
-			URL url = new URL(urlAddr);
-			HttpURLConnection conn ;
-		
-            String protocol = url.getProtocol();
-            if(protocol == null){
-            	protocol = "";
-            }
-            protocol = protocol.toLowerCase();
-          
-            if (protocol.equals("https")) { 
-                trustAllHosts(); 
-                HttpsURLConnection https = (HttpsURLConnection) url.openConnection(); 
-                https.setHostnameVerifier(DO_NOT_VERIFY); 
-                conn = https; 
-            } else { 
-            	conn = (HttpURLConnection) url.openConnection(); 
-            } 
-            
-            if (conn != null) {	
-      
-            
-				conn.setConnectTimeout(3000);
-				conn.setUseCaches(false);
-				conn.setRequestMethod("GET");
-				conn.setDoInput( true ) ;
-				conn.setDoOutput( true ) ;
-				conn.setInstanceFollowRedirects( false );
-            }
-            
-            return conn;
-		}catch(Exception e){
-			throw new RuntimeException(e);
-		}
+	public static HttpURLConnection getHttpURLConnection(String urlAddr) throws IOException {
+
+	 	URL url = new URL(urlAddr);
+	 	HttpURLConnection conn ;
+
+        String protocol = url.getProtocol();
+        if(protocol == null){
+        	protocol = "";
+        }
+        protocol = protocol.toLowerCase();
+
+        if (protocol.equals("https")) {
+            trustAllHosts();
+            HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
+            https.setHostnameVerifier(DO_NOT_VERIFY);
+            conn = https;
+        } else {
+        	conn = (HttpURLConnection) url.openConnection();
+        }
+
+        if (conn != null) {
+	 		conn.setUseCaches(false);
+	 		conn.setDoInput( true ) ;
+	 		conn.setDoOutput( true ) ;
+	 		conn.setInstanceFollowRedirects( false );
+        }
+
+        return conn;
 	}
 	
     private static void trustAllHosts() { 

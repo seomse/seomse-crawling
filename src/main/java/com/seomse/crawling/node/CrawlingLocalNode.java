@@ -5,8 +5,6 @@ import com.seomse.crawling.core.http.HttpUrl;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.SocketTimeoutException;
 /**
  * <pre>
  *  파 일 명 : CrawlingLocalNode.java
@@ -27,13 +25,8 @@ public class CrawlingLocalNode extends CrawlingNode {
 	@Override
 	public String getHttpUrlScript(String url, JSONObject optionData){
 		logger.debug("local node seq: " + seq);
-		
-		try {
-			return HttpUrl.getScript(url, optionData);
-		} catch (SocketTimeoutException e) {
-			throw new RuntimeException(e);
-		}
-		
+		return HttpUrl.getScript(url, optionData);
+
 	}
 
 
