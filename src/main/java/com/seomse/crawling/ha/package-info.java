@@ -1,9 +1,9 @@
 /** 
  * <pre>
- *  설    명 : crawling ha
+ *  설    명 : crawling high availability
  *            seomse-jdbc, seomse-system 사용
  *  작 성 자 : macle 
- *  작 성 일 : 2019.11.10
+ *  작 성 일 : 2019.11.11
  *  버    전 : 1.0
  *  수정이력 :
  *  기타사항 :
