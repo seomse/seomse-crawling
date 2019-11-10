@@ -1,5 +1,6 @@
 package com.seomse.crawling.ha;
 
+import com.seomse.api.ApiRequests;
 import com.seomse.commons.communication.HostAddrPort;
 import com.seomse.commons.config.Config;
 import com.seomse.commons.handler.EndHandler;
@@ -83,12 +84,15 @@ public class CrawlingStandByService extends Service implements Synchronizer {
 
             Engine engine = Engine.getInstance();
 
+            String engineId = engine.getId();
+
             StandByEngine [] standByEngines = crawlingStandBy.standByEngines;
 
             boolean isNextNode = false;
 
+            //noinspection ForLoopReplaceableByForEach
             for (int i = 0; i <standByEngines.length; i++) {
-                if(standByEngines[i].engineId.equals(engine.getId())){
+                if(standByEngines[i].engineId.equals(engineId)){
                     isNextNode = true;
                     break;
                 }
@@ -104,8 +108,27 @@ public class CrawlingStandByService extends Service implements Synchronizer {
                 return;
             }
 
+            CommonConfigs.update(CrawlingHighAvailabilityKey.ACTIVE_ENGINE_ID, engineId);
             //노드전환
             CrawlingActive.start();
+
+            SynchronizerManager.getInstance().sync();
+
+            //noinspection ForLoopReplaceableByForEach
+            for (int i = 0; i <standByEngines.length; i++) {
+                if(standByEngines[i].engineId.equals(engineId)){
+                    continue;
+                }
+                //다른노드에 메타 업데이트 명령 전송
+                try{
+                    ApiRequests.sendToReceiveMessage(standByEngines[i].hostAddress, standByEngines[i].port,"com.seomse.sync", "SyncApi","");
+                }catch(Exception e){
+                    logger.error(ExceptionUtil.getStackTrace(e));
+                }
+            }
+
+
+            setState(State.STOP);
 
         }catch(Exception e){
             logger.error(ExceptionUtil.getStackTrace(e));
@@ -173,7 +196,7 @@ public class CrawlingStandByService extends Service implements Synchronizer {
         setSleepTime(second*1000L);
     }
 
-    private class CrawlingStandBy{
+    private static class CrawlingStandBy{
         private String activeId;
         private String activeHostAddr;
         private int activePort;
@@ -187,7 +210,7 @@ public class CrawlingStandByService extends Service implements Synchronizer {
 
 
 
-    private class StandByEngine{
+    private static class StandByEngine{
         String engineId;
         String hostAddress;
         int port;

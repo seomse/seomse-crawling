@@ -50,8 +50,7 @@ public class CrawlingHighAvailabilityInitializer implements EngineInitializer {
             CrawlingActive.start();
         }else{
             CrawlingStandByService crawlingStandByService = new CrawlingStandByService();
-            Thread thread = new Thread(crawlingStandByService);
-            thread.start();
+            crawlingStandByService.start();
         }
 
 
