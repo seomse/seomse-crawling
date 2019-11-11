@@ -21,7 +21,7 @@ dependencies {
 
     //json
     implementation 'org.json:json:20131018'
-
+//    compile group: 'org.codehaus.jackson', name: 'jackson-mapper-asl', version: '1.8.5'
     implementation 'org.reflections:reflections:0.9.11'
 
     implementation fileTree (dir: 'dependencies', include: ['/**/*.jar'])

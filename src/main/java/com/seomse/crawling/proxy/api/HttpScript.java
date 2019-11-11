@@ -30,11 +30,11 @@ public class HttpScript extends ApiMessage{
 	public void receive(String message) {
 		try {
 			JSONObject messageObj = new JSONObject(message);
-			JSONObject setData = null;
-			if(!messageObj.isNull("setData")) {
-				setData = messageObj.getJSONObject("setData");
+			JSONObject optionData = null;
+			if(!messageObj.isNull("option_data")) {
+				optionData = messageObj.getJSONObject("option_data");
 			}
-			sendMessage(SUCCESS+HttpUrl.getScript(messageObj.getString("url"), setData));
+			sendMessage(SUCCESS+HttpUrl.getScript(messageObj.getString("url"), optionData));
 		}catch(Exception e) {
 			sendMessage(FAIL + ExceptionUtil.getStackTrace(e));
 		}

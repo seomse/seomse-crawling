@@ -53,10 +53,10 @@ public class HttpUrlConnManager {
 	 * @param checkUrl checkUrl
 	 * @param connLimitTime connLimitTime
 	 * @param url url
-	 * @param setData setData
+	 * @param optionData optionData
 	 * @return script (string)
 	 */
-	public String getHttpUrlScript(String checkUrl, long connLimitTime, String url, JSONObject setData) {
+	public String getHttpUrlScript(String checkUrl, long connLimitTime, String url, JSONObject optionData) {
 		
 		CrawlingNode [] nodeArray = server.getNodeArray();
 		if(nodeArray.length == 0) {
@@ -137,10 +137,10 @@ public class HttpUrlConnManager {
 			}
 			try {
 				
-				script = node.getHttpUrlScript(url, setData);
+				script = node.getHttpUrlScript(url, optionData);
 			}catch(NodeEndException e) {
 				server.endNode(node);
-				return getHttpUrlScript(checkUrl, connLimitTime, url, setData);
+				return getHttpUrlScript(checkUrl, connLimitTime, url, optionData);
 			}
 			node.updateLastConnectTime(checkUrl);
 			

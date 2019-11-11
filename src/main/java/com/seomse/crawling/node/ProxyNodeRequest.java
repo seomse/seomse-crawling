@@ -61,7 +61,7 @@ public class ProxyNodeRequest {
 		try {
 			JSONObject messageObj = new JSONObject();
 			messageObj.put("url", url);
-			messageObj.put("setData", optionData);
+			messageObj.put("option_data", optionData);
 			synchronized (waitLock) {
 				waitCount++ ;
 			}

@@ -13,7 +13,7 @@ package com.seomse.crawling.exception;
  * </pre>
  * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
  */
-public class NodeEndException extends Exception{
+public class NodeEndException extends RuntimeException{
 
 	private static final long serialVersionUID = -6526586145031202668L;
 
