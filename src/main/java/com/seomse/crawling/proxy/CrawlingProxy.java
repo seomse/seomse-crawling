@@ -3,17 +3,13 @@
 package com.seomse.crawling.proxy;
 
 import com.seomse.api.ApiCommunication;
-import com.seomse.commons.file.FileUtil;
 import com.seomse.commons.handler.EndHandler;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.seomse.commons.utils.ExceptionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
-import java.nio.charset.Charset;
 
 /**
  * <pre>
@@ -38,13 +34,15 @@ public class CrawlingProxy {
 	private int endCount = 0;
 
 	private final Object lock = new Object();
+
+	private ApiCommunication [] apiCommunicationArray;
 	/**
 	 * 생성자
 	 * @param hostAddress hostAddress
 	 * @param port port
 	 */
 	public CrawlingProxy(String hostAddress, int port, final int communicationCount) throws  IOException{
-
+		apiCommunicationArray = new ApiCommunication[communicationCount];
 		for(int i=0 ; i<communicationCount ; i++) {
 			Socket socket = new Socket(hostAddress, port);
 			ApiCommunication apiCommunication = new ApiCommunication("com.seomse.crawling.proxy.api", socket);
@@ -61,7 +59,9 @@ public class CrawlingProxy {
 					}
 				}
 			});
+
 			apiCommunication.start();
+			apiCommunicationArray[i] = apiCommunication;
 		}
 	}
 
@@ -71,6 +71,21 @@ public class CrawlingProxy {
 	 */
 	public boolean isEnd(){
 		return isEnd;
+	}
+
+
+	public void stop(){
+		if(apiCommunicationArray == null){
+			return;
+		}
+		for(ApiCommunication communication  : apiCommunicationArray){
+			try {
+				communication.disConnect();
+			}catch(Exception e){
+				logger.error(ExceptionUtil.getStackTrace(e));
+			}
+		}
+		apiCommunicationArray = null;
 	}
 	
 

@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * <pre>
@@ -34,6 +33,8 @@ public class CrawlingProxyStarter extends Thread{
     //10초에 한번씩 체크
     private static final long sleepTime = 1000L * 10L;
 
+    private boolean isStop = false;
+    private CrawlingProxy crawlingProxy= null;
     public void run(){
 
 
@@ -55,12 +56,9 @@ public class CrawlingProxyStarter extends Thread{
 
 
         //무한 접속 체크
-        while(true){
+        while(!isStop){
 
             try {
-
-
-                CrawlingProxy crawlingProxy = null;
 
                 //noinspection ForLoopReplaceableByForEach
                 for (int i = 0; i <HostAddrPortArray.length ; i++) {
@@ -92,9 +90,19 @@ public class CrawlingProxyStarter extends Thread{
             }
 
         }
+    }
 
+    public void stopService(){
+
+        isStop = true;
+        if(crawlingProxy != null){
+            crawlingProxy.stop();
+        }
 
     }
+
+
+
 
     public static void main(String[] args) {
 
