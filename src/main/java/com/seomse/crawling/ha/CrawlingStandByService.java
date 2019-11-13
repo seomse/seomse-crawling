@@ -51,8 +51,8 @@ public class CrawlingStandByService extends Service implements Synchronizer {
      */
     public CrawlingStandByService(){
         makeCrawlingStandBy();
-        //기본값 1분
-        long second = Config.getLong(CrawlingHighAvailabilityKey.STAND_BY_CHECK_SECOND, 60L);
+        //기본값 30초
+        long second = Config.getLong(CrawlingHighAvailabilityKey.STAND_BY_CHECK_SECOND, 30L);
         setSleepTime(second*1000L);
         SynchronizerManager.getInstance().add(this);
         final CrawlingStandByService service = this;

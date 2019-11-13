@@ -25,11 +25,11 @@ public class ProxyConfigMake {
 
         JSONArray array = new JSONArray();
         JSONObject info1= new JSONObject();
-        info1.put("host_address", "192.168.0.24");
-        info1.put("port", 33310);
+        info1.put("host_address", "stock.seomse.com");
+        info1.put("port", 22210);
         JSONObject info2= new JSONObject();
-        info2.put("host_address", "192.168.0.27");
-        info2.put("port", 33310);
+        info2.put("host_address", "stock.seomse.com");
+        info2.put("port", 22211);
 
         array.put(info1);
         array.put(info2);
