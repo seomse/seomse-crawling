@@ -25,6 +25,9 @@ public class CrawlingHighAvailabilityInitializer implements EngineInitializer {
 
     @Override
     public void init() {
+
+        logger.debug("CrawlingHighAvailabilityInitializer");
+
         Engine engine = Engine.getInstance();
         if(engine == null){
             logger.debug("engine null");
@@ -44,6 +47,7 @@ public class CrawlingHighAvailabilityInitializer implements EngineInitializer {
             logger.debug("crawling active engine id null key: " + CrawlingHighAvailabilityKey.ACTIVE_ENGINE_ID);
             return;
         }
+
 
         String engineId = engine.getId();
         if(engineId.equals(crawlingEngineId)){
