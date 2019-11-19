@@ -5,9 +5,8 @@ import com.seomse.commons.utils.ExceptionUtil;
 import com.seomse.crawling.CrawlingManager;
 /**
  * <pre>
- *  파 일 명 : HttpScriptTestApi.java
- *  설    명 : 크롤링 서버
- *            - 크롤링 프록시 관리
+ *  파 일 명 : GetHttpScript.java
+ *  설    명 : http script 얻기
  *
  *  작 성 자 : macle
  *  작 성 일 : 2019.11.19
@@ -17,7 +16,7 @@ import com.seomse.crawling.CrawlingManager;
  * </pre>
  * @author Copyrights 2019 by ㈜섬세한사람들. All right reserved.
  */
-public class HttpScriptTestApi extends ApiMessage {
+public class GetHttpScript extends ApiMessage {
 
     @Override
     public void receive(String message) {
