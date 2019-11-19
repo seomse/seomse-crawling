@@ -78,10 +78,7 @@ public class CrawlingProxyStarter extends Thread{
                 }
 
                 //크롤링 서버가 죽은경우 다른서버에 붙기위해 다시 대기함
-                while(true){
-                    if(crawlingProxy.isEnd()){
-                        break;
-                    }
+                while (!crawlingProxy.isEnd()) {
                     Thread.sleep(sleepTime);
                 }
 
