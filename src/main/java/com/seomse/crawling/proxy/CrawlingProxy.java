@@ -91,12 +91,6 @@ public class CrawlingProxy {
 
 
 
-	public static void main(String [] args) {
-		try {
-			new CrawlingProxy("127.0.0.1", 33310, 5);
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
+
 	
 }

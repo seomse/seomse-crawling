@@ -66,7 +66,9 @@ public class HttpUrlConnManager {
 			}
 			return null;
 		}
-		
+
+		logger.debug("node length: " + nodeArray.length);
+
 		isNodeNullLog = true;
 		
 		Object lockObj = lockMap.get(checkUrl);
@@ -79,16 +81,19 @@ public class HttpUrlConnManager {
 				}
 			}
 		}
-		
+
 		CrawlingNode node;
-		String script;
+		String script = null;
+		boolean isNodeExecute = true;
 		//noinspection SynchronizationOnLocalVariableOrMethodParameter
 		synchronized (lockObj) {
 			
 			CrawlingNode lastNode = lastNodeMap.get(checkUrl);
+
+
 			int nextSeq ;
 			
-			if(lastNode == null) {
+			if(lastNode == null || lastNode.isEnd()) {
 				nextSeq = 0;
 			}else {
 				nextSeq = lastNode.getSeq() + 1;
@@ -138,17 +143,25 @@ public class HttpUrlConnManager {
 			try {
 				
 				script = node.getHttpUrlScript(url, optionData);
+				node.updateLastConnectTime(checkUrl);
 			}catch(NodeEndException e) {
+				logger.debug("node end. other node request");
+				isNodeExecute = false;
 				server.endNode(node);
-				return getHttpUrlScript(checkUrl, connLimitTime, url, optionData);
+//				return getHttpUrlScript(checkUrl, connLimitTime, url, optionData);
 			}
-			node.updateLastConnectTime(checkUrl);
-			
 		}
-		synchronized (lock) {
-			lastNodeMap.put(checkUrl, node);
+
+		if(isNodeExecute){
+			synchronized (lock) {
+				lastNodeMap.put(checkUrl, node);
+			}
+		}else{
+			return getHttpUrlScript(checkUrl, connLimitTime, url, optionData);
 		}
+
 		return script;
+
 	}
 	
 }

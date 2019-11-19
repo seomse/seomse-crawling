@@ -2,8 +2,7 @@
 package com.seomse.crawling.node;
 
 import com.seomse.api.ApiRequest;
-import com.seomse.commons.handler.ExceptionHandler;
-import com.seomse.commons.utils.ExceptionUtil;
+import com.seomse.crawling.exception.NodeEndException;
 import com.seomse.crawling.proxy.api.HttpScript;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -43,18 +42,13 @@ public class ProxyNodeRequest {
 		this.crawlingProxyNode = crawlingProxyNode;
 		this.request = request;	
 	}
-	
-	private ExceptionHandler exceptionHandler;
-	/**
-	 * 예외 핸들러 설정
-	 * @param exceptionHandler exceptionHandler
-	 */
-	public void setExceptionHandler(ExceptionHandler exceptionHandler) {
-		this.exceptionHandler = exceptionHandler;
-	}
+
+
 	
 	public String getHttpUrlScript(String url, JSONObject optionData) {
-		
+
+		logger.debug("request http url: " + url);
+
 		String result ;
 		
 		
@@ -66,13 +60,7 @@ public class ProxyNodeRequest {
 				waitCount++ ;
 			}
 			synchronized (lock) {
-				try {
 				result = request.sendToReceiveMessage("HttpScript", messageObj.toString());
-				}catch(Exception e) {
-					ExceptionUtil.exception(e, logger, exceptionHandler);
-					return null;
-				}
-				
 			}
 			synchronized (waitLock) {
 				waitCount-- ;
@@ -88,23 +76,20 @@ public class ProxyNodeRequest {
 			}else if(result.startsWith(HttpScript.FAIL)) {
 				result= result.substring(HttpScript.FAIL.length());
 				logger.error(result);
-				return null;
-						
+//				throw new NodeEndException();
+
 			}else if(result.equals(ApiRequest.CONNECT_FAIL)) {
 				crawlingProxyNode.end();
-				return null;
+				throw new NodeEndException();
 			}
 				
 		}catch(Exception e) {
-			ExceptionUtil.exception(e, logger, exceptionHandler);
-			return null;
+			throw new NodeEndException();
 		}
-		
-		
-		return result;
+
+	return result;
 	}
-	
-	
+
 	/**
 	 * wait count get
 	 * @return waitLength
@@ -119,6 +104,9 @@ public class ProxyNodeRequest {
 	void disConnect() {
 		request.disConnect();	
 	}
-	
+
+	public boolean isConnect(){
+		return request.isConnect();
+	}
 	
 }

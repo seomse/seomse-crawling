@@ -10,17 +10,14 @@ import com.seomse.crawling.core.http.HttpUrlConnManager;
 import com.seomse.crawling.node.CrawlingLocalNode;
 import com.seomse.crawling.node.CrawlingNode;
 import com.seomse.crawling.node.CrawlingProxyNode;
-import com.seomse.crawling.proxy.CrawlingProxy;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 /**
  * <pre>
  *  파 일 명 : CrawlingServer.java
@@ -29,11 +26,11 @@ import java.util.Map;
  *
  *  작 성 자 : macle
  *  작 성 일 : 2018.04
- *  버    전 : 1.0
- *  수정이력 :
+ *  버    전 : 1.1
+ *  수정이력 : 2019.11.16
  *  기타사항 :
  * </pre>
- * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
+ * @author Copyrights 2018 ~ 2019 by ㈜섬세한사람들. All right reserved.
  */
 public class CrawlingServer {
 	
@@ -42,7 +39,9 @@ public class CrawlingServer {
 	private static final CrawlingNode [] EMPTY_NODE_ARRAY = new CrawlingNode[0];
 	
 	private ApiRequestServer requestServer;
-	
+
+	//순서정보 저장이 필요할 경우를 위한 list
+	//메모리 저장용이라서 실제로는 사용되지않음. 실제사용되는건 node array
 	private List<CrawlingNode> nodeList = new LinkedList<>();
 	
 	private CrawlingNode [] nodeArray = EMPTY_NODE_ARRAY;
@@ -62,7 +61,6 @@ public class CrawlingServer {
 	public CrawlingServer(int port){
 		
 		proxyNodeMap = new Hashtable<>();
-		
 		nodeEndHandler = new EndHandler() {
 			@Override
 			public void end(Object arg0) {
@@ -75,34 +73,47 @@ public class CrawlingServer {
 			
 			@Override
 			public void connect(final ApiRequest request) {
-				
 				request.setNotLog();
 				Socket socket = request.getSocket();
 				InetAddress inetAddress = socket.getInetAddress();
 				String nodeKey = inetAddress.getHostAddress() +"," + inetAddress.getHostName();
 				CrawlingProxyNode crawlingProxyNode = proxyNodeMap.get(nodeKey);
-				
-				boolean isNew =false;
-				if(crawlingProxyNode == null) {
-					crawlingProxyNode = new CrawlingProxyNode(nodeKey);
-					proxyNodeMap.put(nodeKey, crawlingProxyNode)	;
-					crawlingProxyNode.setExceptionHandler(exceptionHandler);
-					isNew =true;
-				}
-				crawlingProxyNode.addRequest(request);
-				
-				if(isNew) {
-					synchronized (lock) {
+
+				synchronized (lock) {
+
+					boolean isNew = false;
+					if (crawlingProxyNode == null) {
+						crawlingProxyNode = new CrawlingProxyNode(nodeKey);
+						proxyNodeMap.put(nodeKey, crawlingProxyNode);
+						crawlingProxyNode.setExceptionHandler(exceptionHandler);
+						EndHandler endHandler = new EndHandler() {
+							@Override
+							public void end(Object o) {
+								endNode((CrawlingProxyNode)o);
+							}
+						};
+						crawlingProxyNode.setEndHandler(endHandler);
+						isNew = true;
+					}
+					crawlingProxyNode.addRequest(request);
+
+					if (isNew) {
+
+
+
 						nodeList.add(crawlingProxyNode);
-						nodeArray = nodeList.toArray(new CrawlingNode[0]);
-						for(int i=0 ; i<nodeArray.length ; i++) {
-							nodeArray[i].setSeq(i);
+						CrawlingNode [] array = nodeList.toArray(new CrawlingNode[0]);
+						for (int i = 0; i < array.length; i++) {
+							array[i].setSeq(i);
 						}
-					}		
-				}		
-				
+						nodeArray = array;
+
+						logger.debug("new proxy node connect: " + nodeKey + ", node length: " + nodeArray.length);
+					}
+				}
 			}
 		};
+
 		requestServer = new ApiRequestServer(port, connectHandler);
 	
 		httpUrlConnManager = new HttpUrlConnManager(this);
@@ -122,18 +133,34 @@ public class CrawlingServer {
 	 * @param crawlingNode crawlingNode
 	 */
 	public void endNode(CrawlingNode crawlingNode) {
-		synchronized (lock) {	
+		synchronized (lock) {
+
 			if(nodeList.remove(crawlingNode)) {
+
 				if(nodeList.size() == 0) {
 					nodeArray = EMPTY_NODE_ARRAY;
 				}else {
-					nodeArray = nodeList.toArray(new CrawlingNode[0]);
+					CrawlingNode [] nodeArray = nodeList.toArray(new CrawlingNode[0]);
 					
 					for(int i=0 ; i<nodeArray.length ; i++) {
 						nodeArray[i].setSeq(i);
 					}
+					this.nodeArray = nodeArray;
+
+				}
+
+
+				if(crawlingNode instanceof CrawlingProxyNode){
+					CrawlingProxyNode crawlingProxyNode =(CrawlingProxyNode)crawlingNode;
+					logger.info("proxy node end: " + crawlingProxyNode.getNodeKey() +", " + crawlingProxyNode.getSeq());
+					proxyNodeMap.remove(crawlingProxyNode.getNodeKey());
+				}else{
+					logger.info("node end: " + crawlingNode.getSeq());
+
+
 				}
 			}
+
 		}
 	}
 	
@@ -212,59 +239,4 @@ public class CrawlingServer {
 	public CrawlingNode [] getNodeArray() {
 		return nodeArray;
 	}
-	
-	public static void main(String [] args) {
-		final CrawlingServer crawlingServer = new CrawlingServer(33101);
-		crawlingServer.setLocalNode();
-		crawlingServer.startServer();
-	
-		try {
-			new CrawlingProxy("127.0.0.1", 33101, 5);
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		crawlingServer.getHttpUrlScript("https://www.naver.com/", 0, "https://www.naver.com/", null);
-		crawlingServer.getHttpUrlScript("https://www.naver.com/", 0, "https://www.naver.com/", null);
-//		System.out.println();
-//		System.out.println();
-//		try {
-//			new CrawlingProxy("127.0.0.1", 33310);
-//		}catch(Exception e) {
-//			e.printStackTrace();
-//		}
-//		try {
-//			new CrawlingProxy("127.0.0.1", 33310);
-//		}catch(Exception e) {
-//			e.printStackTrace();
-//		}
-		
-//		new Thread() {
-//			public void run() {		
-//				while(true) {
-//					try {
-//						
-//						crawlingServer.getHttpUrlScript("https://www.naver.com/",5000,"https://www.naver.com/",null);
-//						Thread.sleep(2000);
-//					}catch(Exception e) {
-//						
-//					}
-//					
-//				}
-//			}
-//		}.start();
-//			
-//		while(true) {
-//			try {
-//				
-//				crawlingServer.getHttpUrlScript("https://www.naver.com/",5000,"https://www.naver.com/",null);
-//				
-//				Thread.sleep(2000);
-//			}catch(Exception e) {
-//				
-//			}
-//			
-//		}
-	}
-	
-	
 }

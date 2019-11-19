@@ -4,6 +4,7 @@ package com.seomse.crawling.node;
 
 import com.seomse.api.ApiRequest;
 import com.seomse.commons.utils.ExceptionUtil;
+import com.seomse.crawling.exception.NodeEndException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,43 +69,33 @@ public class CrawlingProxyNode extends CrawlingNode {
 			requestList.clear();
 		}
 		super.end();
-		
 	}
-	
 	
 	@Override
 	public String getHttpUrlScript(String url, JSONObject optionData) {
-		try {
-			logger.debug("proxy node seq: " + seq);
-			
-			
-		
-			ProxyNodeRequest minRequest = getMinRequest();
-			if(minRequest == null) {
-				return null;
-			}
-			
-			return minRequest.getHttpUrlScript(url, optionData);
-			
 
-		}catch(Exception e) {
-			logger.error(ExceptionUtil.getStackTrace(e));
-			return null;
-		}
+		logger.debug("proxy node seq: " + seq);
 		
+		ProxyNodeRequest minRequest = getMinRequest();
+		return minRequest.getHttpUrlScript(url, optionData);
 	}
 	
 	
 	private ProxyNodeRequest getMinRequest() {
 		int size = requestList.size();
 		if(size == 0) {
-			return null;
+			throw new NodeEndException();
 		}
 		//추가될경우를 대비
 		//제거되는경우는없음 
 		ProxyNodeRequest minRequest = requestList.get(0);
+		if(!minRequest.isConnect()){
+			this.end();
+			throw new NodeEndException();
+		}
+
 		int minWaitCount = minRequest.getWaitCount();
-		
+
 		for(int i=1 ; i<size ; i++) {
 			ProxyNodeRequest request = requestList.get(i);
 			if(minWaitCount > request.getWaitCount()) {
@@ -112,9 +103,6 @@ public class CrawlingProxyNode extends CrawlingNode {
 				minWaitCount = request.getWaitCount();
 			}
 		}
-		
-		
-		
 		return minRequest;
 	}
 	
