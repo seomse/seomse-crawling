@@ -144,6 +144,7 @@ public class HttpUrlConnManager {
 				
 				script = node.getHttpUrlScript(url, optionData);
 				node.updateLastConnectTime(checkUrl);
+				lastNodeMap.put(checkUrl, node);
 			}catch(NodeEndException e) {
 				logger.debug("node end. other node request");
 				isNodeExecute = false;
@@ -152,14 +153,9 @@ public class HttpUrlConnManager {
 			}
 		}
 
-		if(isNodeExecute){
-			synchronized (lock) {
-				lastNodeMap.put(checkUrl, node);
-			}
-		}else{
+		if(!isNodeExecute){
 			return getHttpUrlScript(checkUrl, connLimitTime, url, optionData);
 		}
-
 		return script;
 
 	}
