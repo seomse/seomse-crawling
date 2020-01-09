@@ -1,9 +1,9 @@
 package com.seomse.crawling.ha;
 
 import com.seomse.api.ApiRequests;
+import com.seomse.commons.callback.ObjCallback;
 import com.seomse.commons.communication.HostAddrPort;
 import com.seomse.commons.config.Config;
-import com.seomse.commons.handler.EndHandler;
 import com.seomse.commons.service.Service;
 import com.seomse.commons.utils.ExceptionUtil;
 import com.seomse.jdbc.JdbcQuery;
@@ -56,13 +56,17 @@ public class CrawlingStandByService extends Service implements Synchronizer {
         setSleepTime(second*1000L);
         SynchronizerManager.getInstance().add(this);
         final CrawlingStandByService service = this;
-        EndHandler endHandler = new EndHandler() {
+        ObjCallback endCallback = new ObjCallback() {
             @Override
-            public void end(Object o) {
-                SynchronizerManager.getInstance().remove(service);
+            public void callback(Object o) {
+                {
+                    SynchronizerManager.getInstance().remove(service);
+                }
             }
+
         };
-        setEndHandler(endHandler);
+
+        setEndCallback(endCallback);
         setState(State.START);
     }
 
