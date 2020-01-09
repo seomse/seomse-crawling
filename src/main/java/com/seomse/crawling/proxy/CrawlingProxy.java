@@ -3,7 +3,7 @@
 package com.seomse.crawling.proxy;
 
 import com.seomse.api.ApiCommunication;
-import com.seomse.commons.handler.EndHandler;
+import com.seomse.commons.callback.ObjCallback;
 import com.seomse.commons.utils.ExceptionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,9 +47,9 @@ public class CrawlingProxy {
 			Socket socket = new Socket(hostAddress, port);
 			ApiCommunication apiCommunication = new ApiCommunication("com.seomse.crawling.proxy.api", socket);
 			apiCommunication.setNotLog();
-			apiCommunication.setEndHandler(new EndHandler() {
+			apiCommunication.setEndCallback(new ObjCallback() {
 				@Override
-				public void end(Object arg0) {
+				public void callback(Object arg0) {
 					synchronized (lock) {
 						logger.info("connect end");
 						endCount++;

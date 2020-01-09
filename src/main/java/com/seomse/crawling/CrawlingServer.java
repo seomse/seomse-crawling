@@ -4,7 +4,7 @@ package com.seomse.crawling;
 import com.seomse.api.ApiRequest;
 import com.seomse.api.server.ApiRequestConnectHandler;
 import com.seomse.api.server.ApiRequestServer;
-import com.seomse.commons.handler.EndHandler;
+import com.seomse.commons.callback.ObjCallback;
 import com.seomse.commons.handler.ExceptionHandler;
 import com.seomse.crawling.core.http.HttpUrlConnManager;
 import com.seomse.crawling.node.CrawlingLocalNode;
@@ -16,7 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.*;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <pre>
@@ -47,7 +50,7 @@ public class CrawlingServer {
 	private CrawlingNode [] nodeArray = EMPTY_NODE_ARRAY;
 
 	private final Object lock = new Object();
-	private EndHandler nodeEndHandler; 	
+	private ObjCallback nodeEndCallback;
 	
 	private HttpUrlConnManager httpUrlConnManager;
 	
@@ -61,9 +64,9 @@ public class CrawlingServer {
 	public CrawlingServer(int port){
 		
 		proxyNodeMap = new Hashtable<>();
-		nodeEndHandler = new EndHandler() {
+		nodeEndCallback = new ObjCallback() {
 			@Override
-			public void end(Object arg0) {
+			public void callback(Object arg0) {
 				CrawlingNode crawlingNode = (CrawlingNode)arg0;
 				endNode(crawlingNode);			
 			}
@@ -86,13 +89,13 @@ public class CrawlingServer {
 						crawlingProxyNode = new CrawlingProxyNode(nodeKey);
 						proxyNodeMap.put(nodeKey, crawlingProxyNode);
 						crawlingProxyNode.setExceptionHandler(exceptionHandler);
-						EndHandler endHandler = new EndHandler() {
+						ObjCallback endCallback = new ObjCallback() {
 							@Override
-							public void end(Object o) {
+							public void callback(Object o) {
 								endNode((CrawlingProxyNode)o);
 							}
 						};
-						crawlingProxyNode.setEndHandler(endHandler);
+						crawlingProxyNode.setEndCallback(endCallback);
 						isNew = true;
 					}
 					crawlingProxyNode.addRequest(request);
@@ -185,7 +188,7 @@ public class CrawlingServer {
 			}
 			
 			CrawlingLocalNode localNode = new CrawlingLocalNode();
-			localNode.setEndHandler(nodeEndHandler);
+			localNode.setEndCallback(nodeEndCallback);
 			nodeList.add(localNode);
 			nodeArray = nodeList.toArray(new CrawlingNode[0]);
 			for(int i=0 ; i<nodeArray.length ; i++) {
