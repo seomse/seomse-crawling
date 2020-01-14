@@ -32,7 +32,12 @@ public class HttpScript extends ApiMessage{
 			JSONObject messageObj = new JSONObject(message);
 			JSONObject optionData = null;
 			if(!messageObj.isNull("option_data")) {
-				optionData = messageObj.getJSONObject("option_data");
+				Object obj = messageObj.get("option_data");
+				if(obj.getClass() == String.class){
+					optionData = new JSONObject((String) obj);
+				}else{
+					optionData = (JSONObject)obj;
+				}
 			}
 			sendMessage(SUCCESS+HttpUrl.getScript(messageObj.getString("url"), optionData));
 		}catch(Exception e) {
