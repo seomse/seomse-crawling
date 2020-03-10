@@ -1,14 +1,13 @@
 
 package com.seomse.crawling.node;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.JSONObject;
-
-import com.seomse.commons.handler.EndHandler;
+import com.seomse.commons.callback.ObjCallback;
 import com.seomse.commons.handler.ExceptionHandler;
 import com.seomse.crawling.exception.NodeEndException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 /**
  * <pre>
  *  파 일 명 : CrawlingNode.java
@@ -33,14 +32,14 @@ public abstract class CrawlingNode {
 	
 	
 	
-	protected EndHandler endHandler = null;
+	protected ObjCallback endCallback = null;
 	
 	/**
 	 * 종료 핸들러 설정
-	 * @param endHandler endHandler
+	 * @param endCallback ObjCallback
 	 */
-	public void setEndHandler(EndHandler endHandler) {
-		this.endHandler = endHandler;
+	public void setEndCallback(ObjCallback endCallback) {
+		this.endCallback = endCallback;
 	}
 	
 	/**
@@ -84,8 +83,8 @@ public abstract class CrawlingNode {
 	public void end() {
 		isEnd = true;
 		
-		if(endHandler != null) {
-			endHandler.end(this);
+		if(endCallback != null) {
+			endCallback.callback(this);
 		}
 	}
 	
