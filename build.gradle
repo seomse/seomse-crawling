@@ -22,7 +22,7 @@ dependencies {
     //json
     compile group: 'org.json', name: 'json', version: '20190722'
 //    compile group: 'org.codehaus.jackson', name: 'jackson-mapper-asl', version: '1.8.5'
-    compile group: 'org.reflections', name: 'reflections', version: '0.9.12'
+    compile group: 'org.reflections', name: 'reflections', version: '0.9.11'
 
     compile fileTree (dir: 'dependencies', include: ['/**/*.jar'])
 }
