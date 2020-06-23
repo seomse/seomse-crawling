@@ -34,7 +34,7 @@ public class HtmlParser {
     public static String removeContents ( String contents , String prefix , char splitter) {
         int startIdx = prefix.indexOf(splitter);
         String start = prefix.substring(0 , startIdx);
-        String end = prefix.substring(startIdx+1 , prefix.length());
+        String end = prefix.substring(startIdx+1);
         return removeContents(contents , start , end);
     }
 
@@ -83,14 +83,14 @@ public class HtmlParser {
     public static String parseString(String contents , String prefix , char splitter){
         int startIdx = prefix.indexOf(splitter);
         String start = prefix.substring(0 , startIdx);
-        String end = prefix.substring(startIdx+1 , prefix.length());
+        String end = prefix.substring(startIdx+1);
         return parseString(contents , start , end , true);
     }
 
     public static String parseString(String contents , String prefix , char splitter , boolean findFirst){
         int startIdx = prefix.indexOf(splitter);
         String start = prefix.substring(0 , startIdx);
-        String end = prefix.substring(startIdx+1 , prefix.length());
+        String end = prefix.substring(startIdx+1);
         return parseString(contents , start , end , findFirst);
     }
 
@@ -134,7 +134,7 @@ public class HtmlParser {
     public static List<String> parseStringMany(String contents, String prefix , char splitter)  {
         int startIdx = prefix.indexOf(splitter);
         String start = prefix.substring(0 , startIdx);
-        String end = prefix.substring(startIdx+1 , prefix.length());
+        String end = prefix.substring(startIdx+1);
         return parseStringMany(contents , start , end);
     }
 
@@ -143,14 +143,14 @@ public class HtmlParser {
         while ( contents.indexOf(end)!= -1  ){
             String find = parseString( contents.substring(0 , contents.indexOf(end)+end.length() ) , start , end , findFirst );
             list.add(find);
-            contents = contents.substring(contents.indexOf(end)+end.length() , contents.length());
+            contents = contents.substring(contents.indexOf(end)+end.length());
         }
         return list;
     }
     public static List<String> parseStringMany(String contents ,String prefix , char splitter , boolean findFirst) {
         int startIdx = prefix.indexOf(splitter);
         String start = prefix.substring(0 , startIdx);
-        String end = prefix.substring(startIdx+1 , prefix.length());
+        String end = prefix.substring(startIdx+1);
         return parseStringMany(contents , start , end , findFirst);
     }
 
@@ -207,19 +207,21 @@ public class HtmlParser {
             parse = Remove.htmlTag(parse);
         }
 
-        if( parse.indexOf(">") != -1 )
+        if( parse.indexOf(">") != -1 ){
             parse = parse.substring(parse.indexOf(">")+1 , parse.length());
-        if( parse.indexOf("<") != -1 )
-            parse = parse.substring(0 , parse.indexOf("<"));
-
+        }
+        if( parse.indexOf("<") != -1 ) {
+            parse = parse.substring(0, parse.indexOf("<"));
+        }
         int result = 0;
 
-        if( parse.equals("") )
+        if( parse.equals("") ) {
             return result;
+        }
         try{
             result = Integer.parseInt(parse);
         } catch ( NumberFormatException e ) {
-
+            logger.error(ExceptionUtil.getStackTrace(e));
         }
         return result;
     }
@@ -273,7 +275,7 @@ public class HtmlParser {
     public static List<String> parseWithBracket(String contents , String prefix , char splitter) {
         int startIdx = prefix.indexOf(splitter);
         String start = prefix.substring(0 , startIdx);
-        String end = prefix.substring(startIdx+1 , prefix.length());
+        String end = prefix.substring(startIdx+1);
         return parseWithBracket(contents , start , end);
     }
     public static List<String> parseWithBracket(String contents , String prefix) {
@@ -283,7 +285,7 @@ public class HtmlParser {
 
     public static String parseStringWithAbsolutePath(String contents , String url , String prefix) {
         String parsedContent = parseString(contents, prefix);
-        return toAbsolutePath(parsedContent , url);
+        return toAbsolutePath(parsedContent,url);
     }
 
     public static String toAbsolutePath(String contents , String url){
