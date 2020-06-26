@@ -5,10 +5,6 @@ import com.seomse.commons.utils.ExceptionUtil;
 import com.seomse.commons.utils.PriorityUtil;
 import com.seomse.crawling.CrawlingManager;
 import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,10 +48,7 @@ public class CrawlingActive {
         String [] initPackages = packagesValue.split(",");
         List<CrawlingActiveInitializer> initializerList = new ArrayList<>();
         for(String initPackage : initPackages) {
-            Reflections ref = new Reflections(new ConfigurationBuilder()
-                    .setScanners(new SubTypesScanner())
-                    .setUrls(ClasspathHelper.forClassLoader())
-                    .filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix(initPackage))));
+            Reflections ref = new Reflections(initPackage);
 
             for (Class<?> cl : ref.getSubTypesOf(CrawlingActiveInitializer.class)) {
                 try {
