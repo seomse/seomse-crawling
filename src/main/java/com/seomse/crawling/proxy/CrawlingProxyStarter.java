@@ -44,14 +44,14 @@ public class CrawlingProxyStarter extends Thread{
 
 
         JSONArray jsonArray = jsonObject.getJSONArray("connection_infos");
-        HostAddrPort [] HostAddrPortArray = new HostAddrPort[jsonArray.length()];
+        HostAddrPort [] hostAddrPortArray = new HostAddrPort[jsonArray.length()];
 
-        for (int i = 0; i <HostAddrPortArray.length ; i++) {
+        for (int i = 0; i <hostAddrPortArray.length ; i++) {
             JSONObject info =  jsonArray.getJSONObject(i);
             HostAddrPort hostAddrPort = new  HostAddrPort();
             hostAddrPort.setHostAddress(info.getString("host_address"));
             hostAddrPort.setPort(info.getInt("port"));
-            HostAddrPortArray[i] = hostAddrPort;
+            hostAddrPortArray[i] = hostAddrPort;
         }
 
 
@@ -61,8 +61,8 @@ public class CrawlingProxyStarter extends Thread{
             try {
 
                 //noinspection ForLoopReplaceableByForEach
-                for (int i = 0; i <HostAddrPortArray.length ; i++) {
-                    String response = ApiRequests.sendToReceiveMessage(HostAddrPortArray[i].getHostAddress(), HostAddrPortArray[i].getPort(),"com.seomse.crawling.ha","ActiveAddrPortApi","");
+                for (int i = 0; i <hostAddrPortArray.length ; i++) {
+                    String response = ApiRequests.sendToReceiveMessage(hostAddrPortArray[i].getHostAddress(), hostAddrPortArray[i].getPort(),"com.seomse.crawling.ha","ActiveAddrPortApi","");
                     if(response.startsWith("S")){
                         String [] activeInfo =  response.substring(1).split(",");
                         if(PingApi.ping(activeInfo[0], Integer.parseInt(activeInfo[1]))){
