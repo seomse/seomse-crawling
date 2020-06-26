@@ -5,6 +5,10 @@ import com.seomse.commons.utils.ExceptionUtil;
 import com.seomse.commons.utils.PriorityUtil;
 import com.seomse.crawling.CrawlingManager;
 import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +23,8 @@ import java.util.List;
  *  설    명 : 크롤링 엑티브 역할 수행
  *  작 성 자 : macle
  *  작 성 일 : 2019.11.11
- *  버    전 : 1.1
- *  수정이력 : 2020.03.27
+ *  버    전 : 1.2
+ *  수정이력 : 2020.03.27, 2020.06.27
  *  기타사항 :
  * </pre>
  * @author Copyrights 2019 ~ 2020 by ㈜섬세한사람들. All right reserved.
@@ -48,7 +52,11 @@ public class CrawlingActive {
         String [] initPackages = packagesValue.split(",");
         List<CrawlingActiveInitializer> initializerList = new ArrayList<>();
         for(String initPackage : initPackages) {
-            Reflections ref = new Reflections(initPackage);
+            Reflections ref = new Reflections(new ConfigurationBuilder()
+                    .setScanners(new SubTypesScanner())
+                    .setUrls(ClasspathHelper.forClassLoader())
+                    .filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix(initPackage))));
+
             for (Class<?> cl : ref.getSubTypesOf(CrawlingActiveInitializer.class)) {
                 try {
                     CrawlingActiveInitializer initializer = (CrawlingActiveInitializer) cl.newInstance();
