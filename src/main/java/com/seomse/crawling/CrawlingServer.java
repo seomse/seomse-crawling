@@ -186,7 +186,9 @@ public class CrawlingServer {
 				logger.error("local node already");
 				return;
 			}
-			
+
+
+
 			CrawlingLocalNode localNode = new CrawlingLocalNode();
 			localNode.setEndCallback(nodeEndCallback);
 			nodeList.add(localNode);
@@ -194,6 +196,7 @@ public class CrawlingServer {
 			for(int i=0 ; i<nodeArray.length ; i++) {
 				nodeArray[i].setSeq(i);
 			}
+			logger.debug("local node add: " + nodeArray.length);
 		}
 	}
 	
