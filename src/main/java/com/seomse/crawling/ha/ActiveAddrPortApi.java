@@ -1,10 +1,10 @@
 package com.seomse.crawling.ha;
 
 import com.seomse.api.ApiMessage;
+import com.seomse.commons.communication.HostAddrPort;
 import com.seomse.commons.utils.ExceptionUtil;
 import com.seomse.system.commons.CommonConfigs;
 import com.seomse.system.engine.console.EngineConsole;
-import com.seomse.system.server.console.ServerConsole;
 
 /**
  * <pre>
@@ -25,13 +25,13 @@ public class ActiveAddrPortApi extends ApiMessage {
         try {
             String crawlingEngineId = CommonConfigs.getConfig(CrawlingHighAvailabilityKey.ACTIVE_ENGINE_ID);
             String serverId = EngineConsole.getServerId(crawlingEngineId);
-            String hostAddress = ServerConsole.getHostAddressOut(serverId);
+            HostAddrPort hostAddrPort =EngineConsole.getHostAddrPort(crawlingEngineId);
 
-            String port = EngineConsole.getEngineConfig(crawlingEngineId,"crawling.server.port.out");
-            if(port == null){
-                port = EngineConsole.getEngineConfig(crawlingEngineId,"crawling.server.port");
+            String crawlingPort = EngineConsole.getEngineConfig(crawlingEngineId,"crawling.server.port.out");
+            if(crawlingPort == null){
+                crawlingPort = EngineConsole.getEngineConfig(crawlingEngineId,"crawling.server.port");
             }
-            sendMessage("S" + hostAddress + "," + port);
+            sendMessage("S" + hostAddrPort.getHostAddress() + "," + hostAddrPort.getPort() +"," +crawlingPort);
         }catch(Exception e){
             sendMessage("F" + ExceptionUtil.getStackTrace(e));
         }
