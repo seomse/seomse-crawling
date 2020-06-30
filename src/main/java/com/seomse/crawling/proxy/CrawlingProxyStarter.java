@@ -66,7 +66,8 @@ public class CrawlingProxyStarter extends Thread{
                     if(response.startsWith("S")){
                         String [] activeInfo =  response.substring(1).split(",");
                         if(PingApi.ping(activeInfo[0], Integer.parseInt(activeInfo[1]))){
-                            crawlingProxy = new CrawlingProxy(activeInfo[0], Integer.parseInt(activeInfo[1]), communicationCount);
+                            crawlingProxy = new CrawlingProxy(activeInfo[0], Integer
+                                    .parseInt(activeInfo[2]), communicationCount);
                             break;
                         }
                     }
