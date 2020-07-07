@@ -242,7 +242,7 @@ public class HttpUrl {
 					}else{
 						property = 	(JSONObject)obj;
 					}
-					//noinspection unchecked
+
 					Iterator<String> keys = property.keys();
 					while (keys.hasNext()) {
 						String key = keys.next();

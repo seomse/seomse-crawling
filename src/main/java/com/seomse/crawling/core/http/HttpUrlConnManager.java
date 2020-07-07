@@ -29,11 +29,11 @@ public class HttpUrlConnManager {
 	
 	private static final Logger logger = LoggerFactory.getLogger(HttpUrlConnManager.class);
 	
-	private CrawlingServer server;
+	private final CrawlingServer server;
 	
-	private Map<String, CrawlingNode> lastNodeMap;
+	private final Map<String, CrawlingNode> lastNodeMap;
 	
-	private Map<String, Object> lockMap;
+	private final Map<String, Object> lockMap;
 	
 	private final Object lock = new Object();
 	
