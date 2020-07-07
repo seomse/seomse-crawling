@@ -5,6 +5,7 @@ import com.seomse.commons.utils.ExceptionUtil;
 import com.seomse.crawling.CrawlingServer;
 import com.seomse.crawling.exception.NodeEndException;
 import com.seomse.crawling.node.CrawlingNode;
+import com.seomse.crawling.node.CrawlingNodeScript;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +58,19 @@ public class HttpUrlConnManager {
 	 * @return script (string)
 	 */
 	public String getHttpUrlScript(String checkUrl, long connLimitTime, String url, JSONObject optionData) {
-		
+
+		CrawlingNodeScript crawlingNodeScript = getNodeScript(checkUrl, connLimitTime, url, optionData);
+		if(crawlingNodeScript == null){
+			return null;
+		}
+
+		return crawlingNodeScript.getScript();
+	}
+
+
+	public CrawlingNodeScript getNodeScript(String checkUrl, long connLimitTime, String url, JSONObject optionData) {
+
+
 		CrawlingNode [] nodeArray = server.getNodeArray();
 		if(nodeArray.length == 0) {
 			if(isNodeNullLog) {
@@ -70,7 +83,7 @@ public class HttpUrlConnManager {
 		logger.debug("node length: " + nodeArray.length);
 
 		isNodeNullLog = true;
-		
+
 		Object lockObj = lockMap.get(checkUrl);
 		if(lockObj == null) {
 			synchronized (lock) {
@@ -83,67 +96,70 @@ public class HttpUrlConnManager {
 		}
 
 		CrawlingNode node;
-		String script = null;
+		CrawlingNodeScript crawlingNodeScript = null;
 		boolean isNodeExecute = true;
 		//noinspection SynchronizationOnLocalVariableOrMethodParameter
 		synchronized (lockObj) {
-			
+
 			CrawlingNode lastNode = lastNodeMap.get(checkUrl);
 
 
 			int nextSeq ;
-			
+
 			if(lastNode == null || lastNode.isEnd()) {
 				nextSeq = 0;
 			}else {
 				nextSeq = lastNode.getSeq() + 1;
-				
+
 				if(nextSeq >= nodeArray.length) {
 					nextSeq = 0;
-				}	
+				}
 			}
 			node =  nodeArray[nextSeq];
-			
+
 			Long time = node.getLastConnectTime(checkUrl);
 			if(time != null) {
 				long gap = System.currentTimeMillis() - time;
-				
+
 				if( gap < connLimitTime	) {
 					int saveSeq = nextSeq;
-					
+
 					boolean isNodeChange = false;
-					
+
 					while(true) {
 						nextSeq = nextSeq+1;
 						if(nextSeq >= nodeArray.length) {
 							nextSeq = 0;
-						}	
-						
+						}
+
 						if(saveSeq == nextSeq) {
 							break;
 						}
-						
+
 						Long checkTime = nodeArray[nextSeq].getLastConnectTime(checkUrl);
 						if(checkTime == null ||  System.currentTimeMillis() - checkTime >= connLimitTime) {
 							isNodeChange = true;
 							node = nodeArray[nextSeq];
 						}
 					}
-					
+
 					if(!isNodeChange) {
 						try {
 							Thread.sleep(connLimitTime - gap);
 						}catch(Exception e) {
-							logger.error(ExceptionUtil.getStackTrace(e));		
+							logger.error(ExceptionUtil.getStackTrace(e));
 						}
-					}		
+					}
 				}
-			
+
 			}
 			try {
-				
-				script = node.getHttpUrlScript(url, optionData);
+
+				String script = node.getHttpUrlScript(url, optionData);
 				node.updateLastConnectTime(checkUrl);
+
+				crawlingNodeScript = new CrawlingNodeScript(node,script);
+
 				lastNodeMap.put(checkUrl, node);
 			}catch(NodeEndException e) {
 				logger.debug("node end. other node request");
@@ -154,10 +170,11 @@ public class HttpUrlConnManager {
 		}
 
 		if(!isNodeExecute){
-			return getHttpUrlScript(checkUrl, connLimitTime, url, optionData);
+			return getNodeScript(checkUrl, connLimitTime, url, optionData);
 		}
-		return script;
 
+		return crawlingNodeScript;
 	}
-	
+
+
 }

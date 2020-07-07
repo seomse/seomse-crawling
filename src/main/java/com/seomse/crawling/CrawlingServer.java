@@ -9,6 +9,7 @@ import com.seomse.commons.handler.ExceptionHandler;
 import com.seomse.crawling.core.http.HttpUrlConnManager;
 import com.seomse.crawling.node.CrawlingLocalNode;
 import com.seomse.crawling.node.CrawlingNode;
+import com.seomse.crawling.node.CrawlingNodeScript;
 import com.seomse.crawling.node.CrawlingProxyNode;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -16,10 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <pre>
@@ -56,7 +54,8 @@ public class CrawlingServer {
 	
 	
 	private Map<String, CrawlingProxyNode> proxyNodeMap;
-	
+
+
 	/**
 	 * 생성자
 	 * @param port port
@@ -189,7 +188,7 @@ public class CrawlingServer {
 
 
 
-			CrawlingLocalNode localNode = new CrawlingLocalNode();
+			localNode = new CrawlingLocalNode();
 			localNode.setEndCallback(nodeEndCallback);
 			nodeList.add(localNode);
 			nodeArray = nodeList.toArray(new CrawlingNode[0]);
@@ -237,12 +236,23 @@ public class CrawlingServer {
 	public String getHttpUrlScript(String checkUrl, long connLimitTime, String url, JSONObject optionData) {
 		return httpUrlConnManager.getHttpUrlScript(checkUrl, connLimitTime, url, optionData);
 	}
-	
+
+
+	public CrawlingNodeScript getNodeScript(String checkUrl, long connLimitTime, String url, JSONObject optionData){
+		return httpUrlConnManager.getNodeScript(checkUrl, connLimitTime, url, optionData);
+	}
+
 	/**
 	 * 접속가능 node 배열얻기
 	 * @return NodeArray
 	 */
 	public CrawlingNode [] getNodeArray() {
 		return nodeArray;
+	}
+
+	public static void main(String[] args) {
+
+
+		System.out.println(new Random().nextInt(1000));
 	}
 }

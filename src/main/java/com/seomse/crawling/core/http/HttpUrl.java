@@ -235,13 +235,7 @@ public class HttpUrl {
 			}
 			if (!optionData.isNull(HttpOptionDataKey.REQUEST_PROPERTY)) {
 				try {
-					Object obj = optionData.get(HttpOptionDataKey.REQUEST_PROPERTY);
-					JSONObject property;
-					if(obj.getClass() == String.class){
-						property = new JSONObject((String)obj);
-					}else{
-						property = 	(JSONObject)obj;
-					}
+					JSONObject property = optionData.getJSONObject(HttpOptionDataKey.REQUEST_PROPERTY);
 
 					Iterator<String> keys = property.keys();
 					while (keys.hasNext()) {
