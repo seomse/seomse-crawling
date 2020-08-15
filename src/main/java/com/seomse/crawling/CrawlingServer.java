@@ -39,21 +39,20 @@ public class CrawlingServer {
 	
 	private static final CrawlingNode [] EMPTY_NODE_ARRAY = new CrawlingNode[0];
 	
-	private ApiRequestServer requestServer;
+	private final ApiRequestServer requestServer;
 
 	//순서정보 저장이 필요할 경우를 위한 list
 	//메모리 저장용이라서 실제로는 사용되지않음. 실제사용되는건 node array
-	private List<CrawlingNode> nodeList = new LinkedList<>();
+	private final List<CrawlingNode> nodeList = new LinkedList<>();
 	
 	private CrawlingNode [] nodeArray = EMPTY_NODE_ARRAY;
 
 	private final Object lock = new Object();
-	private ObjCallback nodeEndCallback;
+	private final ObjCallback nodeEndCallback;
 	
-	private HttpUrlConnManager httpUrlConnManager;
-	
-	
-	private Map<String, CrawlingProxyNode> proxyNodeMap;
+	private final HttpUrlConnManager httpUrlConnManager;
+
+	private final Map<String, CrawlingProxyNode> proxyNodeMap;
 
 
 	/**
@@ -75,7 +74,6 @@ public class CrawlingServer {
 			
 			@Override
 			public void connect(final ApiRequest request) {
-				request.setNotLog();
 				Socket socket = request.getSocket();
 				InetAddress inetAddress = socket.getInetAddress();
 				String nodeKey = inetAddress.getHostAddress() +"," + inetAddress.getHostName();

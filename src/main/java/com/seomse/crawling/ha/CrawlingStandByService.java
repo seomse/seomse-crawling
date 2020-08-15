@@ -1,8 +1,8 @@
 package com.seomse.crawling.ha;
 
 import com.seomse.api.ApiRequests;
+import com.seomse.api.communication.HostAddrPort;
 import com.seomse.commons.callback.ObjCallback;
-import com.seomse.commons.communication.HostAddrPort;
 import com.seomse.commons.config.Config;
 import com.seomse.commons.service.Service;
 import com.seomse.commons.utils.ExceptionUtil;
@@ -39,7 +39,7 @@ public class CrawlingStandByService extends Service implements Synchronizer {
 
 
 
-    private Comparator<StandByEngine> initializerSort = new Comparator<StandByEngine>() {
+    private final Comparator<StandByEngine> initializerSort = new Comparator<StandByEngine>() {
         @Override
         public int compare(StandByEngine i1, StandByEngine i2 ) {
             return Integer.compare(i1.priority, i2.priority);
@@ -210,7 +210,7 @@ public class CrawlingStandByService extends Service implements Synchronizer {
     }
 
 
-    private boolean isStop = false;
+    private final boolean isStop = false;
 
 
 

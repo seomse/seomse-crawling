@@ -46,7 +46,6 @@ public class CrawlingProxy {
 		for(int i=0 ; i<communicationCount ; i++) {
 			Socket socket = new Socket(hostAddress, port);
 			ApiCommunication apiCommunication = new ApiCommunication("com.seomse.crawling.proxy.api", socket);
-			apiCommunication.setNotLog();
 			apiCommunication.setEndCallback(new ObjCallback() {
 				@Override
 				public void callback(Object arg0) {

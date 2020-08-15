@@ -1,9 +1,9 @@
 package com.seomse.crawling.proxy;
 
 import com.seomse.api.ApiRequests;
-import com.seomse.commons.communication.HostAddrPort;
-import com.seomse.commons.file.FileUtil;
+import com.seomse.api.communication.HostAddrPort;
 import com.seomse.commons.utils.ExceptionUtil;
+import com.seomse.commons.utils.FileUtil;
 import com.seomse.system.commons.PingApi;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,7 +44,7 @@ public class CrawlingProxyStarter extends Thread{
 
 
         JSONArray jsonArray = jsonObject.getJSONArray("connection_infos");
-        HostAddrPort [] hostAddrPortArray = new HostAddrPort[jsonArray.length()];
+        HostAddrPort[] hostAddrPortArray = new HostAddrPort[jsonArray.length()];
 
         for (int i = 0; i <hostAddrPortArray.length ; i++) {
             JSONObject info =  jsonArray.getJSONObject(i);
@@ -74,12 +74,14 @@ public class CrawlingProxyStarter extends Thread{
                 }
 
                 if(crawlingProxy == null){
+                    //noinspection BusyWait
                     Thread.sleep(sleepTime);
                     continue;
                 }
 
                 //크롤링 서버가 죽은경우 다른서버에 붙기위해 다시 대기함
                 while (!crawlingProxy.isEnd()) {
+                    //noinspection BusyWait
                     Thread.sleep(sleepTime);
                 }
 

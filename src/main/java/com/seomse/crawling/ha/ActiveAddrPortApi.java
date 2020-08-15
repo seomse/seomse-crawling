@@ -1,7 +1,7 @@
 package com.seomse.crawling.ha;
 
 import com.seomse.api.ApiMessage;
-import com.seomse.commons.communication.HostAddrPort;
+import com.seomse.api.communication.HostAddrPort;
 import com.seomse.commons.utils.ExceptionUtil;
 import com.seomse.system.commons.CommonConfigs;
 import com.seomse.system.engine.console.EngineConsole;
@@ -25,7 +25,7 @@ public class ActiveAddrPortApi extends ApiMessage {
         try {
             String crawlingEngineId = CommonConfigs.getConfig(CrawlingHighAvailabilityKey.ACTIVE_ENGINE_ID);
             String serverId = EngineConsole.getServerId(crawlingEngineId);
-            HostAddrPort hostAddrPort =EngineConsole.getHostAddrPort(crawlingEngineId);
+            HostAddrPort hostAddrPort = EngineConsole.getHostAddrPort(crawlingEngineId);
 
             String crawlingPort = EngineConsole.getEngineConfig(crawlingEngineId,"crawling.server.port.out");
             if(crawlingPort == null){
