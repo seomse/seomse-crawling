@@ -16,7 +16,7 @@
  	-->
 
 	<!-- -->
-	<entry key="crawling.server.port">33301</entry>
+	<entry key="crawling.server.port">22210</entry>
 	<entry key="crawling.server.local.node.flag">Y</entry>
 	<entry key="crawling.initializer.package">com.seomse</entry>
 
