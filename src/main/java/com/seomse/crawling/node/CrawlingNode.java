@@ -1,4 +1,18 @@
-
+/*
+ * Copyright (C) 2020 Seomse Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.seomse.crawling.node;
 
 import com.seomse.commons.callback.ObjCallback;
@@ -9,17 +23,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 /**
- * <pre>
- *  파 일 명 : CrawlingNode.java
- *  설    명 : 크롤링 노드 속성정의
- *
- *  작 성 자 : macle
- *  작 성 일 : 2018.04
- *  버    전 : 1.0
- *  수정이력 :
- *  기타사항 :
- * </pre>
- * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
+ * crawling node abstract
+ * @author macle
  */
 public abstract class CrawlingNode {
 	
@@ -30,12 +35,10 @@ public abstract class CrawlingNode {
 	
 	protected int seq;
 	
-	
-	
 	protected ObjCallback endCallback = null;
 	
 	/**
-	 * 종료 핸들러 설정
+	 * 종료 call back 설정
 	 * @param endCallback ObjCallback
 	 */
 	public void setEndCallback(ObjCallback endCallback) {
@@ -44,16 +47,16 @@ public abstract class CrawlingNode {
 	
 	/**
 	 * node 순번 얻기
-	 * @return seq
+	 * @return int seq
 	 */
 	public int getSeq() {
 		return seq;
 	}
 
 
-	/**
+	/***
 	 * node 순번 설정
-	 * @param nodeSeq nodeSeq
+	 * @param nodeSeq int
 	 */
 	public void setSeq(int nodeSeq) {
 		this.seq = nodeSeq;
@@ -62,15 +65,15 @@ public abstract class CrawlingNode {
 	protected ExceptionHandler exceptionHandler;
 	/**
 	 * 예외 핸들러 설정
-	 * @param exceptionHandler exceptionHandler
+	 * @param exceptionHandler ExceptionHandler
 	 */
 	public void setExceptionHandler(ExceptionHandler exceptionHandler) {
 		this.exceptionHandler = exceptionHandler;
 	}
 	
 	/**
-	 * 종료여부
-	 * @return is end
+	 * 종료 여부
+	 * @return boolean is end
 	 */
 	public boolean isEnd() {
 		return isEnd;
@@ -88,11 +91,11 @@ public abstract class CrawlingNode {
 		}
 	}
 	
-	private Map<String, Long> lastConnectTimeMap = new HashMap<>();
+	private final Map<String, Long> lastConnectTimeMap = new HashMap<>();
 	/**
 	 * 마지막 접속 time 얻기
-	 * @param checkUrl checkUrl
-	 * @return LastConnectTime
+	 * @param checkUrl String checkUrl
+	 * @return Long LastConnectTime
 	 */
 	public Long getLastConnectTime(String checkUrl) {
 		return lastConnectTimeMap.get(checkUrl);
@@ -100,7 +103,7 @@ public abstract class CrawlingNode {
 	
 	/**
 	 * 마지막 접속 time 업데이트
-	 * @param checkUrl checkUrl
+	 * @param checkUrl String checkUrl
 	 */
 	public void updateLastConnectTime(String checkUrl) {
 		lastConnectTimeMap.put(checkUrl, System.currentTimeMillis());
@@ -108,9 +111,9 @@ public abstract class CrawlingNode {
 	
 	/**
 	 * HttpUrlConnection 을 이용한 script 결과 얻기
-	 * @param url url
-	 * @param optionData optionData
-	 * @return script (string)
+	 * @param url String url
+	 * @param optionData JSONObject optionData
+	 * @return String script
 	 */
 	public abstract String getHttpUrlScript(String url, JSONObject optionData) throws NodeEndException ;
 

@@ -1,26 +1,31 @@
-
+/*
+ * Copyright (C) 2020 Seomse Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.seomse.crawling.node;
 
 import com.seomse.api.ApiRequest;
 import com.seomse.crawling.exception.NodeEndException;
 import com.seomse.crawling.proxy.api.HttpScript;
+import com.seomse.system.commons.SystemMessageType;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 /**
- * <pre>
- *  파 일 명 : ProxyNodeRequest.java
- *  설    명 : proxynode에서 사용하는 request
- *
- *  작 성 자 : macle
- *  작 성 일 : 2018.05
- *  버    전 : 1.0
- *  수정이력 :
- *  기타사항 :
- * </pre>
- * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
+ * proxy node request
+ * @author macle
  */
-
 public class ProxyNodeRequest {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ProxyNodeRequest.class);
@@ -30,12 +35,14 @@ public class ProxyNodeRequest {
 	private final Object lock = new Object();
 	private final Object waitLock = new Object();
 	
-	private ApiRequest request;
+	private final ApiRequest request;
 	
-	private CrawlingProxyNode crawlingProxyNode;
+	private final CrawlingProxyNode crawlingProxyNode;
 	
 	/**
 	 * 생성자
+	 * @param crawlingProxyNode CrawlingProxyNode
+	 * @param request ApiRequest
 	 */
 	ProxyNodeRequest(CrawlingProxyNode crawlingProxyNode
 			, ApiRequest request ){
@@ -43,8 +50,12 @@ public class ProxyNodeRequest {
 		this.request = request;	
 	}
 
-
-	
+	/**
+	 * http script get
+	 * @param url String
+	 * @param optionData JSONObject
+	 * @return String script
+	 */
 	public String getHttpUrlScript(String url, JSONObject optionData) {
 
 		logger.debug("request http url: " + url);
@@ -69,12 +80,12 @@ public class ProxyNodeRequest {
 					waitCount = 0;
 				}
 			} 
-			if(result.startsWith(HttpScript.SUCCESS)) {
-				result = result.substring(HttpScript.SUCCESS.length());
+			if(result.startsWith(SystemMessageType.SUCCESS)) {
+				result = result.substring(SystemMessageType.SUCCESS.length());
 				return result;
 						
-			}else if(result.startsWith(HttpScript.FAIL)) {
-				result= result.substring(HttpScript.FAIL.length());
+			}else if(result.startsWith(SystemMessageType.FAIL)) {
+				result= result.substring(SystemMessageType.FAIL.length());
 				logger.error(result);
 //				throw new NodeEndException();
 
@@ -87,24 +98,27 @@ public class ProxyNodeRequest {
 			throw new NodeEndException();
 		}
 
-	return result;
+		return result;
 	}
 
 	/**
 	 * wait count get
-	 * @return waitLength
+	 * @return int waitLength
 	 */
 	public int getWaitCount() {
 		return waitCount;
 	}
 	
 	/**
-	 * 연결종료
+	 * 연결 종료
 	 */
 	void disConnect() {
 		request.disConnect();	
 	}
 
+	/**
+	 * @return boolean is connect
+	 */
 	public boolean isConnect(){
 		return request.isConnect();
 	}

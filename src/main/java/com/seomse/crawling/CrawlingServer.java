@@ -1,7 +1,22 @@
 
+/*
+ * Copyright (C) 2020 Seomse Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.seomse.crawling;
 
-import com.seomse.api.ApiRequest;
 import com.seomse.api.server.ApiRequestConnectHandler;
 import com.seomse.api.server.ApiRequestServer;
 import com.seomse.commons.callback.ObjCallback;
@@ -17,21 +32,14 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.*;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
- * <pre>
- *  파 일 명 : CrawlingServer.java
- *  설    명 : 크롤링 서버
- *            - 크롤링 프록시 관리
- *
- *  작 성 자 : macle
- *  작 성 일 : 2018.04
- *  버    전 : 1.1
- *  수정이력 : 2019.11.16
- *  기타사항 :
- * </pre>
- * @author Copyrights 2018 ~ 2019 by ㈜섬세한사람들. All right reserved.
+ * CrawlingServer
+ * @author macle
  */
 public class CrawlingServer {
 	
@@ -57,59 +65,43 @@ public class CrawlingServer {
 
 	/**
 	 * 생성자
-	 * @param port port
+	 * @param port int port
 	 */
 	public CrawlingServer(int port){
 		
 		proxyNodeMap = new Hashtable<>();
-		nodeEndCallback = new ObjCallback() {
-			@Override
-			public void callback(Object arg0) {
-				CrawlingNode crawlingNode = (CrawlingNode)arg0;
-				endNode(crawlingNode);			
-			}
+		nodeEndCallback = arg0 -> {
+			CrawlingNode crawlingNode = (CrawlingNode)arg0;
+			endNode(crawlingNode);
 		};
 		
-		ApiRequestConnectHandler connectHandler = new ApiRequestConnectHandler() {
-			
-			@Override
-			public void connect(final ApiRequest request) {
-				Socket socket = request.getSocket();
-				InetAddress inetAddress = socket.getInetAddress();
-				String nodeKey = inetAddress.getHostAddress() +"," + inetAddress.getHostName();
-				CrawlingProxyNode crawlingProxyNode = proxyNodeMap.get(nodeKey);
+		ApiRequestConnectHandler connectHandler = request -> {
+			Socket socket = request.getSocket();
+			InetAddress inetAddress = socket.getInetAddress();
+			String nodeKey = inetAddress.getHostAddress() +"," + inetAddress.getHostName();
+			CrawlingProxyNode crawlingProxyNode = proxyNodeMap.get(nodeKey);
 
-				synchronized (lock) {
+			synchronized (lock) {
 
-					boolean isNew = false;
-					if (crawlingProxyNode == null) {
-						crawlingProxyNode = new CrawlingProxyNode(nodeKey);
-						proxyNodeMap.put(nodeKey, crawlingProxyNode);
-						crawlingProxyNode.setExceptionHandler(exceptionHandler);
-						ObjCallback endCallback = new ObjCallback() {
-							@Override
-							public void callback(Object o) {
-								endNode((CrawlingProxyNode)o);
-							}
-						};
-						crawlingProxyNode.setEndCallback(endCallback);
-						isNew = true;
+				boolean isNew = false;
+				if (crawlingProxyNode == null) {
+					crawlingProxyNode = new CrawlingProxyNode(nodeKey);
+					proxyNodeMap.put(nodeKey, crawlingProxyNode);
+					crawlingProxyNode.setExceptionHandler(exceptionHandler);
+					ObjCallback endCallback = o -> endNode((CrawlingProxyNode)o);
+					crawlingProxyNode.setEndCallback(endCallback);
+					isNew = true;
+				}
+				crawlingProxyNode.addRequest(request);
+
+				if (isNew) {
+					nodeList.add(crawlingProxyNode);
+					CrawlingNode [] array = nodeList.toArray(new CrawlingNode[0]);
+					for (int i = 0; i < array.length; i++) {
+						array[i].setSeq(i);
 					}
-					crawlingProxyNode.addRequest(request);
-
-					if (isNew) {
-
-
-
-						nodeList.add(crawlingProxyNode);
-						CrawlingNode [] array = nodeList.toArray(new CrawlingNode[0]);
-						for (int i = 0; i < array.length; i++) {
-							array[i].setSeq(i);
-						}
-						nodeArray = array;
-
-						logger.debug("new proxy node connect: " + nodeKey + ", node length: " + nodeArray.length);
-					}
+					nodeArray = array;
+					logger.debug("new proxy node connect: " + nodeKey + ", node length: " + nodeArray.length);
 				}
 			}
 		};
@@ -122,7 +114,7 @@ public class CrawlingServer {
 	private ExceptionHandler exceptionHandler;
 	/**
 	 * 예외 핸들러 설정
-	 * @param exceptionHandler exceptionHandler
+	 * @param exceptionHandler ExceptionHandler exceptionHandler
 	 */
 	public void setExceptionHandler(ExceptionHandler exceptionHandler) {
 		this.exceptionHandler = exceptionHandler;
@@ -130,7 +122,7 @@ public class CrawlingServer {
 	
 	/**
 	 * node 종료
-	 * @param crawlingNode crawlingNode
+	 * @param crawlingNode CrawlingNode crawlingNode
 	 */
 	public void endNode(CrawlingNode crawlingNode) {
 		synchronized (lock) {
@@ -222,20 +214,26 @@ public class CrawlingServer {
 		nodeArray = EMPTY_NODE_ARRAY;
 	}
 	
-	
 	/**
 	 * HttpUrlConnection 을 이용한 script 결과 얻기
-	 * @param checkUrl checkUrl 재연결 체크를할 대표 url
-	 * @param connLimitTime connLimitTime 재연결 시도시간
-	 * @param url 실제 접속 url
-	 * @param optionData 옵션데이터
-	 * @return script (string)
+	 * @param checkUrl String
+	 * @param connLimitTime long
+	 * @param url String
+	 * @param optionData JSONObject
+	 * @return String script
 	 */
 	public String getHttpUrlScript(String checkUrl, long connLimitTime, String url, JSONObject optionData) {
 		return httpUrlConnManager.getHttpUrlScript(checkUrl, connLimitTime, url, optionData);
 	}
 
-
+	/**
+	 * HttpUrlConnection 을 활용하여 node 정보와 같이 script 얻기
+	 * @param checkUrl String
+	 * @param connLimitTime long
+	 * @param url String
+	 * @param optionData JSONObject
+	 * @return String script
+	 */
 	public CrawlingNodeScript getNodeScript(String checkUrl, long connLimitTime, String url, JSONObject optionData){
 		return httpUrlConnManager.getNodeScript(checkUrl, connLimitTime, url, optionData);
 	}
@@ -248,9 +246,4 @@ public class CrawlingServer {
 		return nodeArray;
 	}
 
-	public static void main(String[] args) {
-
-
-		System.out.println(new Random().nextInt(1000));
-	}
 }

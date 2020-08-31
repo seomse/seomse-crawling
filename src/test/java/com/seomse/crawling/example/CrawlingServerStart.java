@@ -13,21 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.seomse.crawling.ha;
+package com.seomse.crawling.example;
+
+import com.seomse.api.server.ApiServer;
+import com.seomse.crawling.CrawlingManager;
+
 /**
- * crawling ha 기능에서 사용 하는 key
+ * server start
  * @author macle
  */
-public class CrawlingHighAvailabilityKey {
+public class CrawlingServerStart {
+    public static void main(String[] args) {
 
-    public static final String SERVICE_FLAG  = "crawling.service.flag";
+        ApiServer apiServer = new ApiServer(33001,"com.seomse");
+        apiServer.start();
 
-    public static final String ACTIVE_ENGINE_ID  = "crawling.active.engine.id";
+        //noinspection ResultOfMethodCallIgnored
+        CrawlingManager.getInstance();
 
-    public static final String INITIALIZER_PACKAGE  = "crawling.initializer.package";
-
-    public static final String ACTIVE_PRIORITY  = "crawling.active.priority";
-
-    public static final String STAND_BY_CHECK_SECOND = "crawling.stand.by.check.second";
+    }
 
 }

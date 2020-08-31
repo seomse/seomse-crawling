@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2020 Seomse Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.seomse.crawling.ha;
 
 import com.seomse.commons.config.Config;
@@ -8,16 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <pre>
- *  파 일 명 : CrawlingHighAvailabilityInitializer.java
- *  설    명 : 크롤링 stand by node 에서 동작하는 서비스
- *  작 성 자 : macle
- *  작 성 일 : 2019.11.11
- *  버    전 : 1.0
- *  수정이력 :
- *  기타사항 :
- * </pre>
- * @author Copyrights 2019 by ㈜섬세한사람들. All right reserved.
+ * system engine 기능을 활용한 ha
+ * @author macle
  */
 public class CrawlingHighAvailabilityInitializer implements EngineInitializer {
 

@@ -1,35 +1,49 @@
+/*
+ * Copyright (C) 2020 Seomse Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.seomse.crawling.node;
 
 /**
- * <pre>
- *  파 일 명 : CrawlingNodeScript.java
- *  설    명 :
- *
- *  작 성 자 : macle(김용수)
- *  작 성 일 : 2020.07
- *  버    전 : 1.0
- *  수정이력 :
- *  기타사항 :
- * </pre>
- *
- * @author Copyrights 2020 by ㈜ WIGO. All right reserved.
+ * CrawlingNode, script
+ * @author macle
  */
-
 public class CrawlingNodeScript {
 
-    private CrawlingNode crawlingNode;
-    private String script;
+    private final CrawlingNode crawlingNode;
+    private final String script;
 
+    /**
+     * 생성자
+     * @param crawlingNode CrawlingNode
+     * @param script String script
+     */
     public CrawlingNodeScript(CrawlingNode crawlingNode, String script){
         this.crawlingNode = crawlingNode;
         this.script = script;
     }
 
-
+    /**
+     * @return CrawlingNode
+     */
     public CrawlingNode getCrawlingNode() {
         return crawlingNode;
     }
 
+    /**
+     * @return String script
+     */
     public String getScript() {
         return script;
     }

@@ -1,4 +1,18 @@
-
+/*
+ * Copyright (C) 2020 Seomse Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.seomse.crawling.node;
 
@@ -12,43 +26,30 @@ import org.slf4j.LoggerFactory;
 import java.util.LinkedList;
 import java.util.List;
 /**
- * <pre>
- *  파 일 명 : CrawlingProxyNode.java
- *  설    명 : 크롤링 프록시 동작 ApiRequest 활용
- *             하나의 노드당 여러개의 연결통로  ApiRequest(ProxyNodeRequest) 를관리
- *  작 성 자 : macle
- *  작 성 일 : 2018.04 ~ 2018.05
- *  버    전 : 1.0
- *  수정이력 :
- *  기타사항 :
- * </pre>
- * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
+ * proxy node
+ * @author macle
  */
 public class CrawlingProxyNode extends CrawlingNode {
 	
 	private static final Logger logger = LoggerFactory.getLogger(CrawlingProxyNode.class);
 	
-	private List<ProxyNodeRequest> requestList = new LinkedList<>();
+	private final List<ProxyNodeRequest> requestList = new LinkedList<>();
 	
 	private final Object requestLock = new Object();
 	
-	private String proxyNodeKey;
+	private final String proxyNodeKey;
 	
 	/**
 	 * 생성자
-	 * @param proxyNodeKey proxyNodeKey
+	 * @param proxyNodeKey String proxyNodeKey
 	 */
 	public CrawlingProxyNode(String proxyNodeKey){
 		this.proxyNodeKey = proxyNodeKey;
-		
-//		this.apiRequest = apiRequest;
-//		apiRequest.setNotLog();
-		
 	}
 	
 	/**
 	 * ApiRequest(통신 socket) 추가
-	 * @param request request
+	 * @param request ApiRequest request
 	 */
 	public void addRequest(ApiRequest request) {
 		ProxyNodeRequest proxyNodeRequest = new ProxyNodeRequest(this, request	);
@@ -79,8 +80,11 @@ public class CrawlingProxyNode extends CrawlingNode {
 		ProxyNodeRequest minRequest = getMinRequest();
 		return minRequest.getHttpUrlScript(url, optionData);
 	}
-	
-	
+
+	/**
+	 * 호출 대기가 가장적 은 request 꺼내기
+	 * @return ProxyNodeRequest
+	 */
 	private ProxyNodeRequest getMinRequest() {
 		int size = requestList.size();
 		if(size == 0) {
@@ -105,11 +109,10 @@ public class CrawlingProxyNode extends CrawlingNode {
 		}
 		return minRequest;
 	}
-	
-	
+
 	/**
 	 * node key 얻기
-	 * @return NodeKey
+	 * @return String NodeKey
 	 */
 	public String getNodeKey() {
 		return proxyNodeKey;

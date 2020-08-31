@@ -1,4 +1,18 @@
-
+/*
+ * Copyright (C) 2020 Seomse Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.seomse.crawling.core.http;
 
 import com.seomse.commons.utils.ExceptionUtil;
@@ -13,18 +27,8 @@ import java.net.*;
 import java.util.Iterator;
 
 /**
- * <pre>
- *  파 일 명 : HttpUrl.java
- *  설    명 : HttpUrlConnection 을 사용한 스크립트 수집
- *
- *
- *  작 성 자 : macle
- *  작 성 일 : 2018.04
- *  버    전 : 1.0
- *  수정이력 :
- *  기타사항 :
- * </pre>
- * @author  Copyrights 2018 by ㈜섬세한사람들. All right reserved.
+ * HttpURLConnection 을 활용한 script
+ * @author macle
  */
 public class HttpUrl {
 
@@ -42,13 +46,14 @@ public class HttpUrl {
 	 * - connectTimeout (def : 30000)
 	 * 
 	 * @param url url
-	 * @return script (string)
+	 * @param optionData JSONObject
+	 * @return String script
 	 */
 	public static String getScript(String url, JSONObject optionData) {
 
 
 		try {
-			HttpURLConnection conn = getHttpURLConnection(url, optionData);
+			HttpURLConnection conn = newHttpURLConnection(url, optionData);
 			try {
 				int MAX_REDIRECT_COUNT = 3;
 				for (int i = 0; i < MAX_REDIRECT_COUNT; i++) {
@@ -56,7 +61,7 @@ public class HttpUrl {
 							|| conn.getResponseCode() == HttpsURLConnection.HTTP_MOVED_PERM) {
 						// Redirected URL 받아오기
 						String redirectedUrl = conn.getHeaderField("Location");
-						conn = getHttpURLConnection(redirectedUrl, optionData);
+						conn = newHttpURLConnection(redirectedUrl, optionData);
 					} else {
 						break;
 					}
@@ -88,13 +93,12 @@ public class HttpUrl {
 		}
 	}
 
-
-
 	/**
-	 * HttpURLConnection에 해당하는 스크립트를 얻어온다.
+	 * HttpURLConnection 에 해당 하는 script 를 얻어옴
 	 * @param conn HttpURLConnection
-	 * @param charSet charSet
-	 * @return  script (string)
+	 * @param charSet String
+	 * @return String script
+	 * @throws IOException IOException
 	 */
 	public static String getScript(HttpURLConnection conn, String charSet) throws IOException {
 		StringBuilder message = new StringBuilder(); 
@@ -140,12 +144,13 @@ public class HttpUrl {
 		
 		return message.toString();
 	}
-	
+
 	/**
-	 * url에 해당하는 파일을 다운받아서 filePath 에 저장한다.
-	 * @param urlAddress url address
-	 * @param filePath file path
+	 * url에 해당하는 파일을 다운 받아서 filePath 에 저장
+	 * @param urlAddress String
+	 * @param filePath String save path
 	 * @return File
+	 * @throws IOException IOException
 	 */
 	public static File getFile(String urlAddress, String filePath) throws IOException {
 		InputStream in = null;
@@ -153,7 +158,7 @@ public class HttpUrl {
 		//noinspection CaughtExceptionImmediatelyRethrown
 		try {
 			File file = null;
-			HttpURLConnection conn = getHttpURLConnection(urlAddress, null);
+			HttpURLConnection conn = newHttpURLConnection(urlAddress, null);
 			
 			if (conn != null && conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
 				
@@ -194,14 +199,15 @@ public class HttpUrl {
 			}
 		}
 	}
-	
-	
+
 	/**
-	 * HttpUrlConnection 을 생성한다.
-	 * @param urlAddr urlAddress
+	 * HttpUrlConnection 생성
+	 * @param urlAddr String
+	 * @param optionData JSONObject
 	 * @return HttpURLConnection
+	 * @throws IOException IOException
 	 */
-	public static HttpURLConnection getHttpURLConnection(String urlAddr,  JSONObject optionData) throws IOException {
+	public static HttpURLConnection newHttpURLConnection(String urlAddr, JSONObject optionData) throws IOException {
 
 	 	URL url = new URL(urlAddr);
 	 	HttpURLConnection conn ;
@@ -341,11 +347,5 @@ public class HttpUrl {
         } 
     } 
 
-	final static HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {
-        
-		public boolean verify(String arg0, SSLSession arg1) {
-			// TODO Auto-generated method stub
-			return true;
-		} 
-    }; 
+	private final static HostnameVerifier DO_NOT_VERIFY = (arg0, arg1) -> true;
 }

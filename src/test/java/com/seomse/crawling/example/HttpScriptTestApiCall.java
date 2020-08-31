@@ -13,21 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.seomse.crawling.ha;
+package com.seomse.crawling.example;
+
+import com.seomse.api.ApiRequests;
+
 /**
- * crawling ha 기능에서 사용 하는 key
+ * http get test
  * @author macle
  */
-public class CrawlingHighAvailabilityKey {
+public class HttpScriptTestApiCall {
+    public static void main(String[] args) {
 
-    public static final String SERVICE_FLAG  = "crawling.service.flag";
-
-    public static final String ACTIVE_ENGINE_ID  = "crawling.active.engine.id";
-
-    public static final String INITIALIZER_PACKAGE  = "crawling.initializer.package";
-
-    public static final String ACTIVE_PRIORITY  = "crawling.active.priority";
-
-    public static final String STAND_BY_CHECK_SECOND = "crawling.stand.by.check.second";
-
+        System.out.println(ApiRequests.sendToReceiveMessage("127.0.0.1", 33001,"com.seomse.crawling.apis","HttpScriptTestApi","https://codeday.me/ko/qa/20190706/982179.html"));
+    }
 }

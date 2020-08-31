@@ -1,9 +1,22 @@
-
+/*
+ * Copyright (C) 2020 Seomse Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.seomse.crawling.proxy;
 
 import com.seomse.api.ApiCommunication;
-import com.seomse.commons.callback.ObjCallback;
 import com.seomse.commons.utils.ExceptionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,17 +25,8 @@ import java.io.IOException;
 import java.net.Socket;
 
 /**
- * <pre>
- *  파 일 명 : CrawlingProxy.java
- *  설    명 : 크롤링 프록시 서버
- *
- *  작 성 자 : malce
- *  작 성 일 : 2018.04
- *  버    전 : 1.0
- *  수정이력 :
- *  기타사항 :
- * </pre>
- * @author Copyrights 2018 by ㈜섬세한사람들. All right reserved.
+ * CrawlingProxy remote proxy
+ * @author macle
  */
 public class CrawlingProxy {
 	
@@ -36,25 +40,26 @@ public class CrawlingProxy {
 	private final Object lock = new Object();
 
 	private ApiCommunication [] apiCommunicationArray;
+
+
 	/**
 	 * 생성자
-	 * @param hostAddress hostAddress
-	 * @param port port
+	 * @param hostAddress String
+	 * @param port int
+	 * @param communicationCount final
+	 * @throws IOException IOException
 	 */
 	public CrawlingProxy(String hostAddress, int port, final int communicationCount) throws  IOException{
 		apiCommunicationArray = new ApiCommunication[communicationCount];
 		for(int i=0 ; i<communicationCount ; i++) {
 			Socket socket = new Socket(hostAddress, port);
 			ApiCommunication apiCommunication = new ApiCommunication("com.seomse.crawling.proxy.api", socket);
-			apiCommunication.setEndCallback(new ObjCallback() {
-				@Override
-				public void callback(Object arg0) {
-					synchronized (lock) {
-						logger.info("connect end");
-						endCount++;
-						if(endCount == communicationCount){
-							isEnd = true;
-						}
+			apiCommunication.setEndCallback(arg0 -> {
+				synchronized (lock) {
+					logger.info("connect end");
+					endCount++;
+					if(endCount == communicationCount){
+						isEnd = true;
 					}
 				}
 			});
@@ -66,13 +71,16 @@ public class CrawlingProxy {
 
 	/**
 	 * 종료여부
-	 * @return 종료여부 얻기
+	 * @return boolean is end
 	 */
 	public boolean isEnd(){
 		return isEnd;
 	}
 
 
+	/**
+	 * 종료
+	 */
 	public void stop(){
 		if(apiCommunicationArray == null){
 			return;

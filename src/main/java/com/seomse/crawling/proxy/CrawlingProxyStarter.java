@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2020 Seomse Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.seomse.crawling.proxy;
 
 import com.seomse.api.ApiRequests;
@@ -13,18 +28,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 
 /**
- * <pre>
- *  파 일 명 : CrawlingProxyStarter.java
- *  설    명 : 크롤링 프록시 서버 시작 시킬떄 사용
- *            프록시 설치용 프로그램에서 시작 시킨다
- *
- *  작 성 자 : malce
- *  작 성 일 : 2019.11.11
- *  버    전 : 1.0
- *  수정이력 :
- *  기타사항 :
- * </pre>
- * @author Copyrights 2019 by ㈜섬세한사람들. All right reserved.
+ * CrawlingProxyStarter remote proxy
+ * @author macle
  */
 public class CrawlingProxyStarter extends Thread{
 
@@ -35,6 +40,7 @@ public class CrawlingProxyStarter extends Thread{
 
     private boolean isStop = false;
     private CrawlingProxy crawlingProxy= null;
+    @Override
     public void run(){
 
 
@@ -92,6 +98,9 @@ public class CrawlingProxyStarter extends Thread{
         }
     }
 
+    /**
+     * 서비스 중지
+     */
     public void stopService(){
 
         isStop = true;
@@ -101,11 +110,7 @@ public class CrawlingProxyStarter extends Thread{
 
     }
 
-
-
-
     public static void main(String[] args) {
-
         new CrawlingProxyStarter().start();
     }
 }

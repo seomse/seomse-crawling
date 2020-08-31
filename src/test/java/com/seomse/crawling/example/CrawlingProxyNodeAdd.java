@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.seomse.crawling.ha;
+package com.seomse.crawling.example;
+
+import com.seomse.crawling.proxy.CrawlingProxy;
+
 /**
- * crawling ha 기능에서 사용 하는 key
+ * proxy node add
  * @author macle
  */
-public class CrawlingHighAvailabilityKey {
-
-    public static final String SERVICE_FLAG  = "crawling.service.flag";
-
-    public static final String ACTIVE_ENGINE_ID  = "crawling.active.engine.id";
-
-    public static final String INITIALIZER_PACKAGE  = "crawling.initializer.package";
-
-    public static final String ACTIVE_PRIORITY  = "crawling.active.priority";
-
-    public static final String STAND_BY_CHECK_SECOND = "crawling.stand.by.check.second";
+public class CrawlingProxyNodeAdd {
+    public static void main(String [] args) {
+        try {
+            new CrawlingProxy("127.0.0.1", 33001, 1);
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }
