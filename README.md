@@ -18,10 +18,10 @@
 
 
 # gradle
-implementation 'com.seomse.jdbc:seomse-crawling:0.7.0'
+implementation 'com.seomse.crawling:seomse-crawling:0.7.0'
 
 # etc
-https://mvnrepository.com/artifact/com.seomse.jdbc/seomse-crawling/0.7.0
+https://mvnrepository.com/artifact/com.seomse.crawling/seomse-crawling/0.7.0
 
 
 # communication
