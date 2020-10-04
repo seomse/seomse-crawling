@@ -16,9 +16,8 @@
 package com.seomse.crawling.node;
 
 import com.seomse.api.ApiRequest;
+import com.seomse.api.Messages;
 import com.seomse.crawling.exception.NodeEndException;
-import com.seomse.crawling.proxy.api.HttpScript;
-import com.seomse.system.commons.SystemMessageType;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,12 +79,12 @@ public class ProxyNodeRequest {
 					waitCount = 0;
 				}
 			} 
-			if(result.startsWith(SystemMessageType.SUCCESS)) {
-				result = result.substring(SystemMessageType.SUCCESS.length());
+			if(result.startsWith(Messages.SUCCESS)) {
+				result = result.substring(Messages.SUCCESS.length());
 				return result;
 						
-			}else if(result.startsWith(SystemMessageType.FAIL)) {
-				result= result.substring(SystemMessageType.FAIL.length());
+			}else if(result.startsWith(Messages.FAIL)) {
+				result= result.substring(Messages.FAIL.length());
 				logger.error(result);
 //				throw new NodeEndException();
 

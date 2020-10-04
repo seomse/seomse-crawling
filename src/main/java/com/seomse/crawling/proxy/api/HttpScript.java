@@ -15,7 +15,7 @@
  */
 package com.seomse.crawling.proxy.api;
 
-import com.seomse.system.commons.SystemMessageType;
+import com.seomse.api.Messages;
 import org.json.JSONObject;
 
 import com.seomse.api.ApiMessage;
@@ -41,9 +41,9 @@ public class HttpScript extends ApiMessage{
 					optionData = (JSONObject)obj;
 				}
 			}
-			sendMessage(SystemMessageType.SUCCESS+HttpUrl.getScript(messageObj.getString("url"), optionData));
+			sendMessage(Messages.SUCCESS+HttpUrl.getScript(messageObj.getString("url"), optionData));
 		}catch(Exception e) {
-			sendMessage(SystemMessageType.FAIL + ExceptionUtil.getStackTrace(e));
+			sendMessage(Messages.FAIL + ExceptionUtil.getStackTrace(e));
 		}
 	}
 

@@ -17,9 +17,9 @@
 package com.seomse.crawling.apis;
 
 import com.seomse.api.ApiMessage;
+import com.seomse.api.Messages;
 import com.seomse.commons.utils.ExceptionUtil;
 import com.seomse.crawling.CrawlingManager;
-import com.seomse.system.commons.SystemMessageType;
 
 /**
  * http script 얻기
@@ -32,7 +32,7 @@ public class GetHttpScript extends ApiMessage {
         try {
             sendMessage(CrawlingManager.getInstance().getServer().getHttpUrlScript(message,1000L, message,null));
         }catch(Exception e){
-            sendMessage(SystemMessageType.FAIL + ExceptionUtil.getStackTrace(e));
+            sendMessage(Messages.FAIL + ExceptionUtil.getStackTrace(e));
         }
     }
 }
