@@ -66,17 +66,23 @@ public class CrawlingProxyStarter extends Thread{
 
             try {
 
+                logger.debug("connect request");
+
                 //noinspection ForLoopReplaceableByForEach
                 for (int i = 0; i <hostAddrPortArray.length ; i++) {
-                    String response = ApiRequests.sendToReceiveMessage(hostAddrPortArray[i].getHostAddress(), hostAddrPortArray[i].getPort(),"com.seomse.crawling.ha","ActiveAddrPortApi","");
-                    if(response.startsWith("S")){
-                        String [] activeInfo =  response.substring(1).split(",");
-                        if(PingApi.ping(activeInfo[0], Integer.parseInt(activeInfo[1]))){
-                            crawlingProxy = new CrawlingProxy(activeInfo[0], Integer
-                                    .parseInt(activeInfo[2]), communicationCount);
-                            break;
+                    try {
+                        String response = ApiRequests.sendToReceiveMessage(hostAddrPortArray[i].getHostAddress(), hostAddrPortArray[i].getPort(), "com.seomse.crawling.ha", "ActiveAddrPortApi", "");
+                        if (response.startsWith("S")) {
+                            String[] activeInfo = response.substring(1).split(",");
+                            if (PingApi.ping(activeInfo[0], Integer.parseInt(activeInfo[1]))) {
+                                crawlingProxy = new CrawlingProxy(activeInfo[0], Integer
+                                        .parseInt(activeInfo[2]), communicationCount);
+                                logger.debug("connect success");
+
+                                break;
+                            }
                         }
-                    }
+                    }catch(Exception ignore){}
                 }
 
                 if(crawlingProxy == null){
@@ -86,13 +92,17 @@ public class CrawlingProxyStarter extends Thread{
                 }
 
                 //크롤링 서버가 죽은경우 다른서버에 붙기위해 다시 대기함
-                while (!crawlingProxy.isEnd()) {
+                while (crawlingProxy.isConnect()) {
                     //noinspection BusyWait
                     Thread.sleep(sleepTime);
                 }
 
+                crawlingProxy.disConnect();
+                crawlingProxy = null;
             } catch (Exception e) {
                 logger.error(ExceptionUtil.getStackTrace(e));
+                try{ //noinspection BusyWait
+                    Thread.sleep(sleepTime); }catch (Exception ignore){}
             }
 
         }
@@ -105,7 +115,7 @@ public class CrawlingProxyStarter extends Thread{
 
         isStop = true;
         if(crawlingProxy != null){
-            crawlingProxy.stop();
+            crawlingProxy.disConnect();
         }
 
     }

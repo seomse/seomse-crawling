@@ -73,15 +73,33 @@ public class CrawlingProxy {
 	 * 종료여부
 	 * @return boolean is end
 	 */
-	public boolean isEnd(){
-		return isEnd;
+	public boolean isConnect(){
+		if(isEnd){
+			return false;
+		}
+
+		if(apiCommunicationArray == null){
+			return false;
+		}
+
+		for(ApiCommunication communication  : apiCommunicationArray){
+			try {
+				if(!communication.isConnect()){
+					return false;
+				}
+			}catch(Exception e){
+				logger.error(ExceptionUtil.getStackTrace(e));
+				return false;
+			}
+		}
+		return true;
 	}
 
 
 	/**
 	 * 종료
 	 */
-	public void stop(){
+	public void disConnect(){
 		if(apiCommunicationArray == null){
 			return;
 		}
@@ -93,11 +111,9 @@ public class CrawlingProxy {
 			}
 		}
 		apiCommunicationArray = null;
+		isEnd = true;
 	}
 	
 
 
-
-
-	
 }

@@ -55,7 +55,12 @@ public class CrawlingActive {
             return Integer.compare(seq1, seq2);
         };
 
-        String packagesValue = Config.getConfig(CrawlingHighAvailabilityKey.INITIALIZER_PACKAGE, "com.seomse");
+        String packagesValue = Config.getConfig(CrawlingHighAvailabilityKey.INITIALIZER_PACKAGE);
+
+        if(packagesValue == null){
+            packagesValue = Config.getConfig("default.package", "com.seomse");
+        }
+
 
         String [] initPackages = packagesValue.split(",");
         List<CrawlingActiveInitializer> initializerList = new ArrayList<>();
