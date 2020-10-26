@@ -117,6 +117,25 @@ public class CrawlingProxyNode extends CrawlingNode {
 	public String getNodeKey() {
 		return proxyNodeKey;
 	}
-	
+
+	/**
+	 * ping
+	 * @return boolean
+	 */
+	public boolean ping(){
+		ProxyNodeRequest [] requests;
+
+		synchronized (requestLock) {
+			requests = requestList.toArray( new ProxyNodeRequest[0]);
+		}
+
+		for(ProxyNodeRequest request : requests) {
+			if(!request.ping()){
+				return false;
+			}
+		}
+
+		return true;
+	}
 	
 }

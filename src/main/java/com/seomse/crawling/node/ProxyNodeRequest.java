@@ -121,5 +121,18 @@ public class ProxyNodeRequest {
 	public boolean isConnect(){
 		return request.isConnect();
 	}
-	
+
+	/**
+	 * ping
+	 * @return boolean
+	 */
+	public boolean ping(){
+		String result;
+		synchronized (lock){
+			result = request.sendToReceiveMessage("ProxyPing","");
+		}
+		return result.startsWith(Messages.SUCCESS);
+
+	}
+
 }

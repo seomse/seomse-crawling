@@ -17,6 +17,7 @@
 package com.seomse.crawling;
 
 import com.seomse.commons.config.Config;
+import com.seomse.crawling.service.ProxyNodePingService;
 
 /**
  * CrawlingManager
@@ -48,6 +49,9 @@ public class CrawlingManager {
             crawlingServer.setLocalNode();
         }
         crawlingServer.startServer();
+        ProxyNodePingService proxyNodePingService = new ProxyNodePingService(crawlingServer);
+        proxyNodePingService.start();
+
     }
 
     /**

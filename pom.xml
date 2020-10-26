@@ -6,7 +6,7 @@
 
     <groupId>com.seomse.crawling</groupId>
     <artifactId>seomse-crawling</artifactId>
-    <version>0.7.3</version>
+    <version>0.7.4</version>
     <packaging>jar</packaging>
 
     <name>seomse-crawling</name>
@@ -155,13 +155,13 @@
         <dependency>
             <groupId>com.seomse.system</groupId>
             <artifactId>seomse-system</artifactId>
-            <version>0.9.4</version>
+            <version>0.9.6</version>
         </dependency>
 
         <dependency>
             <groupId>com.seomse.api</groupId>
             <artifactId>seomse-api</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.5</version>
         </dependency>
 
     </dependencies>

@@ -18,6 +18,7 @@ package com.seomse.crawling.proxy;
 
 import com.seomse.api.ApiCommunication;
 import com.seomse.commons.utils.ExceptionUtil;
+import com.seomse.commons.utils.time.Times;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,9 +85,14 @@ public class CrawlingProxy {
 
 		for(ApiCommunication communication  : apiCommunicationArray){
 			try {
-				if(!communication.isConnect()){
+				if(!communication.isConnect() ){
 					return false;
 				}
+
+				if(System.currentTimeMillis() - communication.getLastConnectTime() > Times.HOUR_1){
+					return false;
+				}
+
 			}catch(Exception e){
 				logger.error(ExceptionUtil.getStackTrace(e));
 				return false;
@@ -94,6 +100,9 @@ public class CrawlingProxy {
 		}
 		return true;
 	}
+
+
+
 
 
 	/**

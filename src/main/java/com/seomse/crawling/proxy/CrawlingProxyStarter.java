@@ -71,7 +71,9 @@ public class CrawlingProxyStarter extends Thread{
                 //noinspection ForLoopReplaceableByForEach
                 for (int i = 0; i <hostAddrPortArray.length ; i++) {
                     try {
+
                         String response = ApiRequests.sendToReceiveMessage(hostAddrPortArray[i].getHostAddress(), hostAddrPortArray[i].getPort(), "com.seomse.crawling.ha", "ActiveAddrPortApi", "");
+
                         if (response.startsWith("S")) {
                             String[] activeInfo = response.substring(1).split(",");
                             if (PingApi.ping(activeInfo[0], Integer.parseInt(activeInfo[1]))) {
@@ -82,7 +84,7 @@ public class CrawlingProxyStarter extends Thread{
                                 break;
                             }
                         }
-                    }catch(Exception ignore){}
+                    }catch(Exception ignore){ }
                 }
 
                 if(crawlingProxy == null){
