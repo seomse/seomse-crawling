@@ -68,7 +68,7 @@ public class HttpUrl {
 				}
 
 			} catch (IOException e) {
-				logger.error(e.getMessage());
+				logger.error(ExceptionUtil.getStackTrace(e));
 			}
 
 			String charSet = "UTF-8";
@@ -128,12 +128,7 @@ public class HttpUrl {
 					message.setLength(message.length()-1);
 				}
 			}
-		}catch(SocketTimeoutException | ConnectException te){
-			throw te;
-		} catch (Exception e) {
-			logger.error(ExceptionUtil.getStackTrace(e));
-			throw e;
-		}finally{
+		} finally{
 			//noinspection CatchMayIgnoreException
 			try{
 				if(br != null) {
@@ -240,56 +235,25 @@ public class HttpUrl {
 				return conn;
 			}
 			if (!optionData.isNull(HttpOptionDataKey.REQUEST_PROPERTY)) {
-				try {
-					JSONObject property = optionData.getJSONObject(HttpOptionDataKey.REQUEST_PROPERTY);
+				JSONObject property = optionData.getJSONObject(HttpOptionDataKey.REQUEST_PROPERTY);
 
-					Iterator<String> keys = property.keys();
-					while (keys.hasNext()) {
-						String key = keys.next();
-
-						conn.setRequestProperty(key, property.getString(key));
-					}
-
-				} catch (Exception e) {
-					logger.error(ExceptionUtil.getStackTrace(e));
+				Iterator<String> keys = property.keys();
+				while (keys.hasNext()) {
+					String key = keys.next();
+					conn.setRequestProperty(key, property.getString(key));
 				}
 
 			}
 
 			if (!optionData.isNull(HttpOptionDataKey.REQUEST_METHOD)) {
-				try {
-					String req = optionData.getString(HttpOptionDataKey.REQUEST_METHOD);
-					conn.setRequestMethod(req);
-				} catch (Exception e) {
-					logger.error(ExceptionUtil.getStackTrace(e));
-				}
+				String req = optionData.getString(HttpOptionDataKey.REQUEST_METHOD);
+				conn.setRequestMethod(req);
 			} else {
 				conn.setRequestMethod("GET");
 			}
 
-			String charSet = "UTF-8";
 
-			if (!optionData.isNull(HttpOptionDataKey.CHARACTER_SET)) {
-				try {
-					charSet = optionData.getString(HttpOptionDataKey.CHARACTER_SET);
-				} catch (JSONException e) {
-					logger.error(ExceptionUtil.getStackTrace(e));
-				}
-			}
 
-			if (!optionData.isNull(HttpOptionDataKey.OUTPUT_STREAM_WRITE)) {
-				byte[] contents;
-				try {
-					String outputStreamValue = optionData.getString(HttpOptionDataKey.OUTPUT_STREAM_WRITE);
-					contents = outputStreamValue.getBytes(charSet);
-					OutputStream outSteam = conn.getOutputStream();
-					outSteam.write(contents);
-					outSteam.flush();
-					outSteam.close();
-				} catch (Exception e) {
-					logger.error(ExceptionUtil.getStackTrace(e));
-				}
-			}
 
 			int readTimeout = 30000;
 			if (!optionData.isNull(HttpOptionDataKey.READ_TIME_OUT)) {
@@ -309,8 +273,27 @@ public class HttpUrl {
 					logger.error(ExceptionUtil.getStackTrace(e));
 				}
 			}
-
 			conn.setConnectTimeout(connectTimeout);
+
+			String charSet = "UTF-8";
+			if (!optionData.isNull(HttpOptionDataKey.CHARACTER_SET)) {
+				try {
+					charSet = optionData.getString(HttpOptionDataKey.CHARACTER_SET);
+				} catch (JSONException e) {
+					logger.error(ExceptionUtil.getStackTrace(e));
+				}
+			}
+
+			if (!optionData.isNull(HttpOptionDataKey.OUTPUT_STREAM_WRITE)) {
+				byte[] contents;
+				String outputStreamValue = optionData.getString(HttpOptionDataKey.OUTPUT_STREAM_WRITE);
+				contents = outputStreamValue.getBytes(charSet);
+				OutputStream outSteam = conn.getOutputStream();
+				outSteam.write(contents);
+				outSteam.flush();
+				outSteam.close();
+			}
+
         }
 
         return conn;

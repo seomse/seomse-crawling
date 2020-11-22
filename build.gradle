@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'com.seomse.crawling'
-version '0.7.5-SNAPSHOT'
+version '0.7.6'
 
 
 repositories {
@@ -18,6 +18,6 @@ dependencies {
     //json
     implementation 'org.json:json:20200518'
     implementation 'com.seomse.api:seomse-api:1.0.5'
-    implementation 'com.seomse.system:seomse-system:0.9.7'
+    implementation 'com.seomse.system:seomse-system:0.9.8'
 
 }

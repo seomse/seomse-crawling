@@ -18,16 +18,18 @@
 
 
 # gradle
-implementation 'com.seomse.crawling:seomse-crawling:0.7.5'
+implementation 'com.seomse.crawling:seomse-crawling:0.7.6'
 
 # etc
-https://mvnrepository.com/artifact/com.seomse.crawling/seomse-crawling/0.7.5
+https://mvnrepository.com/artifact/com.seomse.crawling/seomse-crawling/0.7.6
 
 
 # communication
 ### blog, homepage
-- seomse.tistory.com
 - www.seomse.com
+- github.com/seomse/
+- seomse.tistory.com
+- seomse.github.io
 - seomse.com
 
 ### 카카오톡 오픈톡
@@ -36,5 +38,10 @@ https://mvnrepository.com/artifact/com.seomse.crawling/seomse-crawling/0.7.5
 ### 슬랙 slack
 - https://seomse.slack.com/
 
-### email (협업, 외주)
+### email
  - comseomse@gmail.com
+ 
+ 
+# dev
+ - macle
+    -  [github.com/macle86](https://github.com/macle86)
