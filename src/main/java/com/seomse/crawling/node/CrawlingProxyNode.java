@@ -82,7 +82,7 @@ public class CrawlingProxyNode extends CrawlingNode {
 	}
 
 	/**
-	 * 호출 대기가 가장적 은 request 꺼내기
+	 * 호출 대기가 가장적은 request 꺼내기
 	 * @return ProxyNodeRequest
 	 */
 	private ProxyNodeRequest getMinRequest() {

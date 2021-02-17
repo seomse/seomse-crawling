@@ -17,6 +17,7 @@ package com.seomse.crawling.node;
 
 import com.seomse.api.ApiRequest;
 import com.seomse.api.Messages;
+import com.seomse.commons.config.Config;
 import com.seomse.crawling.exception.NodeEndException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -46,7 +47,14 @@ public class ProxyNodeRequest {
 	ProxyNodeRequest(CrawlingProxyNode crawlingProxyNode
 			, ApiRequest request ){
 		this.crawlingProxyNode = crawlingProxyNode;
-		this.request = request;	
+		this.request = request;
+
+		Long proxyNodeWaitTimeOut = Config.getLong("crawling.proxy.waiting.time.out");
+
+
+		if(proxyNodeWaitTimeOut != null) {
+			request.setWaitingTime(proxyNodeWaitTimeOut);
+		}
 	}
 
 	/**

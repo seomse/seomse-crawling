@@ -54,7 +54,7 @@ public abstract class CrawlingNode {
 	}
 
 
-	/***
+	/**
 	 * node 순번 설정
 	 * @param nodeSeq int
 	 */

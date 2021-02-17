@@ -60,14 +60,10 @@ public class CrawlingProxyStarter extends Thread{
             hostAddrPortArray[i] = hostAddrPort;
         }
 
-
         //무한 접속 체크
         while(!isStop){
-
             try {
-
                 logger.debug("connect request");
-
                 //noinspection ForLoopReplaceableByForEach
                 for (int i = 0; i <hostAddrPortArray.length ; i++) {
                     try {
@@ -99,8 +95,23 @@ public class CrawlingProxyStarter extends Thread{
                     Thread.sleep(sleepTime);
                 }
 
-                crawlingProxy.disConnect();
-                crawlingProxy = null;
+                
+               try {
+                   //연결 종료중 에러 무시
+                   crawlingProxy.disConnect();
+                   crawlingProxy = null;
+               }catch(Exception e){
+                   logger.error(ExceptionUtil.getStackTrace(e));
+               }
+               
+               try {
+                   //강제 종료 이후에 2초후 재연결
+                   //noinspection BusyWait
+                   Thread.sleep(2000L);
+               }catch(Exception e){
+                   logger.error(ExceptionUtil.getStackTrace(e));
+               }
+
             } catch (Exception e) {
                 logger.error(ExceptionUtil.getStackTrace(e));
                 try{ //noinspection BusyWait

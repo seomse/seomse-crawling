@@ -15,11 +15,13 @@
  */
 package com.seomse.crawling.core.http;
 
+import com.seomse.api.ApiRequest;
 import com.seomse.commons.utils.ExceptionUtil;
 import com.seomse.crawling.CrawlingServer;
 import com.seomse.crawling.exception.NodeEndException;
 import com.seomse.crawling.node.CrawlingNode;
 import com.seomse.crawling.node.CrawlingNodeScript;
+import com.seomse.crawling.node.CrawlingProxyNode;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -172,16 +174,20 @@ public class HttpUrlConnManager {
 			try {
 
 				String script = node.getHttpUrlScript(url, optionData);
-				node.updateLastConnectTime(checkUrl);
+//				if(script != null && node instanceof CrawlingProxyNode && script.equals(ApiRequest.TIME_OVER)){
+//					server.endNode(node);
+//					isNodeExecute = false;
+//				}
+//				else{
+					node.updateLastConnectTime(checkUrl);
+					crawlingNodeScript = new CrawlingNodeScript(node,script);
+					lastNodeMap.put(checkUrl, node);
+//				}
 
-				crawlingNodeScript = new CrawlingNodeScript(node,script);
-
-				lastNodeMap.put(checkUrl, node);
 			}catch(NodeEndException e) {
 				logger.debug("node end. other node request");
 				isNodeExecute = false;
 				server.endNode(node);
-//				return getHttpUrlScript(checkUrl, connLimitTime, url, optionData);
 			}
 		}
 

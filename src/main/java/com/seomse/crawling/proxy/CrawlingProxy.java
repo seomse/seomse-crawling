@@ -102,9 +102,6 @@ public class CrawlingProxy {
 	}
 
 
-
-
-
 	/**
 	 * 종료
 	 */
@@ -122,7 +119,4 @@ public class CrawlingProxy {
 		apiCommunicationArray = null;
 		isEnd = true;
 	}
-	
-
-
 }
