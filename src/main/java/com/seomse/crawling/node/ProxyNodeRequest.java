@@ -49,11 +49,11 @@ public class ProxyNodeRequest {
 		this.crawlingProxyNode = crawlingProxyNode;
 		this.request = request;
 
-		Long proxyNodeWaitTimeOut = Config.getLong("crawling.proxy.waiting.time.out");
+		Long proxyNodeWaitTimeOut = Config.getLong("crawling.proxy.wait.time.out");
 
 
 		if(proxyNodeWaitTimeOut != null) {
-			request.setWaitingTime(proxyNodeWaitTimeOut);
+			request.setWaitTimeOut(proxyNodeWaitTimeOut);
 		}
 	}
 

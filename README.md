@@ -18,9 +18,9 @@
 
 
 # gradle
-implementation 'com.seomse.crawling:seomse-crawling:0.7.7'
+implementation 'com.seomse.crawling:seomse-crawling:0.7.9'
 - etc
-    - https://mvnrepository.com/artifact/com.seomse.crawling/seomse-crawling/0.7.7
+    - https://mvnrepository.com/artifact/com.seomse.crawling/seomse-crawling/0.7.9
 
 # etc
 

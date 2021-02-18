@@ -174,15 +174,17 @@ public class HttpUrlConnManager {
 			try {
 
 				String script = node.getHttpUrlScript(url, optionData);
-//				if(script != null && node instanceof CrawlingProxyNode && script.equals(ApiRequest.TIME_OVER)){
-//					server.endNode(node);
-//					isNodeExecute = false;
-//				}
-//				else{
+				if(script != null && node instanceof CrawlingProxyNode && (script.equals(ApiRequest.TIME_OVER ) || script.equals(ApiRequest.CONNECT_FAIL))){
+					server.endNode(node);
+					isNodeExecute = false;
+
+					logger.debug("node connect fail retry");
+
+				}else{
 					node.updateLastConnectTime(checkUrl);
 					crawlingNodeScript = new CrawlingNodeScript(node,script);
 					lastNodeMap.put(checkUrl, node);
-//				}
+				}
 
 			}catch(NodeEndException e) {
 				logger.debug("node end. other node request");
