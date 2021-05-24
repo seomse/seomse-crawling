@@ -33,7 +33,33 @@ import java.util.Iterator;
 public class HttpUrl {
 
 	private final static Logger logger = LoggerFactory.getLogger(HttpUrl.class);
-	
+
+	/**
+	 * Rest Get 형태로 활용
+	 * @param url address
+	 * @return rest result or script
+	 */
+	public static String get(String url){
+		return get(url, "UTF-8");
+	}
+
+	/**
+	 * Rest Get 형태로 활용
+	 * @param url address
+	 * @param charSet chat set
+	 * @return rest result or script
+	 */
+	public static String get(String url, String charSet){
+		JSONObject requestProperty = new JSONObject();
+		requestProperty.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.193 Safari/537.36");
+
+		JSONObject optionData = new JSONObject();
+		optionData.put(HttpOptionDataKey.REQUEST_METHOD, "GET");
+		optionData.put(HttpOptionDataKey.CHARACTER_SET,charSet);
+		optionData.put(HttpOptionDataKey.REQUEST_PROPERTY, requestProperty);
+		return HttpUrl.getScript(url, optionData);
+	}
+
 	/**
 	 * url 에 해당하는 스크립트를 얻기
 	 * 통신용이기 때문에 오류처리에 대한 메시지도 정의함

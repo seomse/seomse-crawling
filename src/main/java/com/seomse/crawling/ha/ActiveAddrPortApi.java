@@ -31,7 +31,6 @@ public class ActiveAddrPortApi extends ApiMessage {
     public void receive(String message) {
         try {
             String crawlingEngineId = CommonConfigs.getConfig(CrawlingHighAvailabilityKey.ACTIVE_ENGINE_ID);
-            String serverId = EngineConsole.getServerId(crawlingEngineId);
             HostAddrPort hostAddrPort = EngineConsole.getHostAddrPort(crawlingEngineId);
 
             String crawlingPort = EngineConsole.getEngineConfig(crawlingEngineId,"crawling.server.port.out");
