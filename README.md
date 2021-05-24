@@ -16,13 +16,16 @@
 - HttpURLConnection 을 활용한 crawling 에서의 다양한 유틸성 기능
 - proxy node client
 
+# mode
+crawling.server.mode 설정 값으로 아래 동작 옵션을 설정할 수 있습니다 default: engine
+standalone : 단독 서비스로 띄울때 활용
+engine :  seomse-system 의 engine 에서 동작
+
 
 # gradle
 implementation 'com.seomse.crawling:seomse-crawling:0.7.9'
 - etc
     - https://mvnrepository.com/artifact/com.seomse.crawling/seomse-crawling/0.7.9
-
-# etc
 
 
 # communication

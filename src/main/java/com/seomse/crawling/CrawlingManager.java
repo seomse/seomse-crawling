@@ -37,14 +37,14 @@ public class CrawlingManager {
         return Singleton.instance;
     }
 
-
+    public static final int DEFAULT_PORT = 33301;
     private final CrawlingServer crawlingServer;
 
     /**
      * 크롤링 서버
      */
     private CrawlingManager(){
-        crawlingServer = new CrawlingServer(Config.getInteger("crawling.server.port", 33301));
+        crawlingServer = new CrawlingServer(Config.getInteger("crawling.server.port", DEFAULT_PORT));
         if(Config.getBoolean("crawling.server.local.node.flag",true)) {
             crawlingServer.setLocalNode();
         }

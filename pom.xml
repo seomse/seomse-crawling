@@ -6,7 +6,7 @@
 
     <groupId>com.seomse.crawling</groupId>
     <artifactId>seomse-crawling</artifactId>
-    <version>0.7.9</version>
+    <version>0.8.0</version>
     <packaging>jar</packaging>
 
     <name>seomse-crawling</name>
@@ -149,7 +149,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20201115</version>
+            <version>20210307</version>
         </dependency>
 
         <dependency>

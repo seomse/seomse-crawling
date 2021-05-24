@@ -72,9 +72,20 @@ public class CrawlingProxyStarter extends Thread{
 
                         if (response.startsWith("S")) {
                             String[] activeInfo = response.substring(1).split(",");
-                            if (PingApi.ping(activeInfo[0], Integer.parseInt(activeInfo[1]))) {
-                                crawlingProxy = new CrawlingProxy(activeInfo[0], Integer
-                                        .parseInt(activeInfo[2]), communicationCount);
+                            String addr;
+                            int port;
+                            int crawlingPort ;
+                            if(activeInfo.length ==1){
+                                addr = hostAddrPortArray[i].getHostAddress();
+                                port = hostAddrPortArray[i].getPort();
+                                crawlingPort = Integer.parseInt(response.substring(1).trim());
+                            }else{
+                                addr = activeInfo[0];
+                                port = Integer.parseInt(activeInfo[1]);
+                                crawlingPort = Integer.parseInt(activeInfo[2]);
+                            }
+                            if (PingApi.ping(addr, port)) {
+                                crawlingProxy = new CrawlingProxy(addr, crawlingPort, communicationCount);
                                 logger.debug("connect success");
 
                                 break;
