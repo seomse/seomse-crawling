@@ -46,19 +46,37 @@ public class HttpUrl {
 	/**
 	 * Rest Get 형태로 활용
 	 * @param url address
-	 * @param charSet chat set
+	 * @param charSet char set
 	 * @return rest result or script
 	 */
 	public static String get(String url, String charSet){
+		return HttpUrl.getScript(url, getChromeGetSimple(charSet));
+	}
+
+	/**
+	 * 크롬 기본 옵션정보
+	 * @param charSet char set
+	 * @return 크롬 User-Agent 세팅 된 옵션
+	 */
+	public static JSONObject getChromeGetSimple(String charSet){
 		JSONObject requestProperty = new JSONObject();
-		requestProperty.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.193 Safari/537.36");
+		requestProperty.put("User-Agent", getChromeUserAgent());
 
 		JSONObject optionData = new JSONObject();
 		optionData.put(HttpOptionDataKey.REQUEST_METHOD, "GET");
 		optionData.put(HttpOptionDataKey.CHARACTER_SET,charSet);
 		optionData.put(HttpOptionDataKey.REQUEST_PROPERTY, requestProperty);
-		return HttpUrl.getScript(url, optionData);
+		return optionData;
 	}
+
+	/**
+	 * 크롬 기본 정보 (크롬 버젼이 올라가면 아래설정이 변경 됨)
+	 * @return chrome user agent
+	 */
+	public static String getChromeUserAgent(){
+		return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36";
+	}
+
 
 	/**
 	 * url 에 해당하는 스크립트를 얻기

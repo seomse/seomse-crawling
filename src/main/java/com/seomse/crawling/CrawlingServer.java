@@ -216,26 +216,26 @@ public class CrawlingServer {
 	
 	/**
 	 * HttpUrlConnection 을 이용한 script 결과 얻기
-	 * @param checkUrl String
+	 * @param check limit 체크 시간에 사용하는 키값
 	 * @param connLimitTime long
 	 * @param url String
 	 * @param optionData JSONObject
 	 * @return String script
 	 */
-	public String getHttpUrlScript(String checkUrl, long connLimitTime, String url, JSONObject optionData) {
-		return httpUrlConnManager.getHttpUrlScript(checkUrl, connLimitTime, url, optionData);
+	public String getHttpUrlScript(String check, long connLimitTime, String url, JSONObject optionData) {
+		return httpUrlConnManager.getHttpUrlScript(check, connLimitTime, url, optionData);
 	}
 
 	/**
 	 * HttpUrlConnection 을 활용하여 node 정보와 같이 script 얻기
-	 * @param checkUrl String
+	 * @param check limit 체크 시간에 사용하는 키값
 	 * @param connLimitTime long
 	 * @param url String
 	 * @param optionData JSONObject
 	 * @return String script
 	 */
-	public CrawlingNodeScript getNodeScript(String checkUrl, long connLimitTime, String url, JSONObject optionData){
-		return httpUrlConnManager.getNodeScript(checkUrl, connLimitTime, url, optionData);
+	public CrawlingNodeScript getNodeScript(String check, long connLimitTime, String url, JSONObject optionData){
+		return httpUrlConnManager.getNodeScript(check, connLimitTime, url, optionData);
 	}
 
 	/**
