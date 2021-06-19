@@ -23,9 +23,9 @@ engine :  seomse-system 의 engine 에서 동작
 
 
 # gradle
-implementation 'com.seomse.crawling:seomse-crawling:0.7.9'
+implementation 'com.seomse.crawling:seomse-crawling:0.8.2'
 - etc
-    - https://mvnrepository.com/artifact/com.seomse.crawling/seomse-crawling/0.7.9
+    - https://mvnrepository.com/artifact/com.seomse.crawling/seomse-crawling/0.8.2
 
 
 # communication

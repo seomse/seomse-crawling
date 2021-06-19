@@ -28,6 +28,8 @@ public class CrawlingScript {
 
 	private final String [] scripts;
 
+	private boolean isHtmlRemove = true;
+
 	/**
 	 * 생성자
 	 * @param script String html script
@@ -39,8 +41,16 @@ public class CrawlingScript {
 		scripts[1] = script;
 
 	}
-	
-	
+
+	/**
+	 * html tag remove
+	 * default true
+	 * @param htmlRemove html remove flag
+	 */
+	public void setHtmlRemove(boolean htmlRemove) {
+		isHtmlRemove = htmlRemove;
+	}
+
 	/**
 	 * 사이 값 얻기
 	 * @param start String start with
@@ -88,7 +98,9 @@ public class CrawlingScript {
 		}
 
 		String result = script.substring(startIndex, endIndex);
-		result = Change.spaceContinue(Remove.htmlTag(result)).trim();
+		if(isHtmlRemove) {
+			result = Change.spaceContinue(Remove.htmlTag(result)).trim();
+		}
 
 		if(index == 1){
 			scripts[index] = script.substring(endIndex + end.length());
